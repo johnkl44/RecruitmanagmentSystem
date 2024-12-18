@@ -39,7 +39,7 @@
                 @* @(jobs.PostingDate != null ? jobs.PostingDate.Value.ToString("yyyy-MM-dd") : "N/A") *@
                 <td>    NUll </td>
                 <td>
-                    @Html.ActionLink("Edit", "#", new { @class = "btn btn-success" }) |
+                    @Html.ActionLink("Edit", "UpdateJobs", new { id = jobs.JobId }) |
                     @Html.ActionLink("Details", "#", new { @class = "btn btn-success" }) |
                     @Html.ActionLink("Deactivate", "#", new { @class = "btn btn-danger" })
                 </td>

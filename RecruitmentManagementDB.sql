@@ -153,6 +153,7 @@ DECLARE @RowCount INT = 0
 END 
 
 --- Delete User
+
 CREATE PROCEDURE SPD_User
 (
 @UserId INT
@@ -203,6 +204,17 @@ BEGIN
 	Password = @Password
 	WHERE UserId= @UserID
 END	
+
+-- Get User By User name
+
+ALTER PROCEDURE SP_GetUserByUsername
+(    @UserName NVARCHAR(50))
+AS
+BEGIN
+SELECT UserId,FirstName,LastName,DateOfBirth,Gender,PhoneNumber,Email,Address,State,City,Username,Password,Role FROM tblUsers WHERE Username = @Username
+END
+
+EXEC SP_GetUserByUsername 'Admin'
 
 ---===== tblJobPosting ====
 
@@ -264,16 +276,68 @@ END
 
 EXEC SPR_JobPostings
 
--- Get User By User name
+--- UPDATE JObPostings
 
-ALTER PROCEDURE SP_GetUserByUsername
-(    @UserName NVARCHAR(50))
+CREATE PROCEDURE SPU_Jobs
+(
+	@JobId INT,
+	@JobTitle NVARCHAR(100),      
+    @JobDescription NVARCHAR(MAX),       
+    @RequiredSkills NVARCHAR(MAX),            
+    @Experiance NVARCHAR(50),        
+    @SalaryRange NVARCHAR(50),   
+    @Deadline DATE, 
+    @PosterPhoto VARBINARY(MAX)     
+)
 AS
 BEGIN
-SELECT UserId,FirstName,LastName,DateOfBirth,Gender,PhoneNumber,Email,Address,State,City,Username,Password,Role FROM tblUsers WHERE Username = @Username
-END
+DECLARE @RowCount INT = 0
+	BEGIN TRY
+		SET @RowCount=(SELECT COUNT(1) FROM tblJobPostings WITH (NOLOCK) WHERE JobId=@JobId)
+		IF @RowCount > 0
+			BEGIN
+				BEGIN TRAN
+					UPDATE tblJobPostings
+					SET 
+						JobTitle = @JobTitle,      
+						JobDescription = @JobDescription,       
+						RequiredSkills = @RequiredSkills,            
+						Experience = @Experiance,        
+						SalaryRange = @SalaryRange,   
+						Deadline = @Deadline, 
+						PosterPhoto = @PosterPhoto     
+   
+					WHERE JobId =@JobId
+				COMMIT TRAN
+			END
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRAN
+	END CATCH
+END 
 
-EXEC SP_GetUserByUsername 'Admin'
+--- Delete JobPostings
+CREATE PROCEDURE SPD_JobPostings
+(
+@JobId INT
+)
+AS
+BEGIN
+DECLARE @RowCount INT = 0
+	BEGIN TRY
+		SET @RowCount=(SELECT COUNT(1) FROM tblJobPostings WITH (NOLOCK) WHERE JobId=@JobId)
+		IF @RowCount > 0
+			BEGIN
+				BEGIN TRAN
+					DELETE FROM tblJobPostings
+					WHERE JobId=@JobId
+				COMMIT TRAN
+			END
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRAN
+	END CATCH
+END 
 
 ---==== Table Application =====
 ---  Create tblApplications table

@@ -17,6 +17,10 @@ namespace RecruitmentManagementSystem.Controllers
         {
             adminDAL = dal;
         }
+        /// <summary>
+        /// Admin home page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult AdminIndex()
         {
             var role = HttpContext.Session.GetString("Role");
@@ -31,6 +35,10 @@ namespace RecruitmentManagementSystem.Controllers
             ViewBag.Username = username;
             return View();
         }
+        /// <summary>
+        /// logout form admin
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -38,6 +46,10 @@ namespace RecruitmentManagementSystem.Controllers
             TempData["successMessage"] = "You have been logged out successfully.";
             return RedirectToAction("Index","Home");
         }
+        /// <summary>
+        /// creating jobs in admin
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult CreateJob()
         {
@@ -78,11 +90,9 @@ namespace RecruitmentManagementSystem.Controllers
                     return RedirectToAction("SignIn", "Home");
                 }
 
-                // Assign job author and posting date
                 job.Author = userId.Value;
                 job.PostingDate = DateTime.UtcNow;
 
-                // Save the job to the database
                 adminDAL.JobCreation(job);
 
                 TempData["successMessage"] = "Job successfully created";
@@ -94,7 +104,10 @@ namespace RecruitmentManagementSystem.Controllers
                 return View(job);
             }
         }
-
+        /// <summary>
+        /// list all users in admin
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Candidates()
         {
             List<Users> users = new List<Users>();  
@@ -108,7 +121,10 @@ namespace RecruitmentManagementSystem.Controllers
             }
             return View(users);
         }
-
+        /// <summary>
+        /// list all jobs in admin and Perform CURD operations
+        /// </summary>
+        /// <returns></returns>
         public IActionResult ViewJobs()
         {
             List<JobCreationsModel> jobs = new List<JobCreationsModel>();
@@ -193,8 +209,59 @@ namespace RecruitmentManagementSystem.Controllers
                 return RedirectToAction("Candidates");
             }
         }
+        /// <summary>
+        /// Update Jobs
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult UpdateJobs(int id)
+        {
+            try
+            {
+                JobCreationsModel job = adminDAL.GetJobById(id);
+                if (job == null)
+                {
+                    TempData["errorMessage"] = $"Job with ID {id} not found.";
+                    return RedirectToAction("ViewJobs");
+                }
+                return View(job);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error occurred while deactivating user: {ex.Message}";
+                return RedirectToAction("ViewJobs");
+            }
+        }
+        [HttpPost]
+        public IActionResult UpdateJobs(JobCreationsModel job)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["errorMessage"] = "Invalid credentials";
+                    return View(job);
+                }
 
-
+                if (job.PosterPhoto != null && job.PosterPhoto.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        job.PosterPhoto.CopyTo(memoryStream);
+                        job.Poster = memoryStream.ToArray();
+                    }
+                }
+                adminDAL.UpdateJobs(job);
+                TempData["successMessage"] = "Job successfully updated";
+                return RedirectToAction("ViewJobs");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View(job);
+            }
+        }
         /// <summary>
         /// Settings Page
         /// </summary>
@@ -263,7 +330,7 @@ namespace RecruitmentManagementSystem.Controllers
                 return View();
             }
         }
-
+       
 
     }
 }

@@ -67,6 +67,11 @@ namespace RecruitmentManagementSystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var user = candidateDAL.GetUserById((int)userId);
+            if(user == null)
+            {
+                TempData["ErrorMessage"] = "User not available";
+                return RedirectToAction("CandidateIndex");
+            }
             return View(user);
         }
         [HttpPost]
@@ -80,11 +85,7 @@ namespace RecruitmentManagementSystem.Controllers
                     TempData["errorMessage"] = "Session expired. Please log in again.";
                     return RedirectToAction("Index", "Home");
                 }
-                if (!ModelState.IsValid)
-                {
-                    TempData["errorMessage"] = "Data is invalid.";
-                    return View(user);
-                }
+                
                 user.UserId = (int)userId;
                 candidateDAL.UpdateUser(user);
                 TempData["successMessage"] = "Profile updated successfully.";

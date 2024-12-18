@@ -70,7 +70,7 @@ namespace RecruitmentManagementSystem.DAL
         /// Register User
         /// </summary>
         /// <param name="model"></param>
-        public void SignUpUser(Users model,string role)
+        public void SignUpUser(Users model, string role)
         {
             using (conn = new SqlConnection(GetConnectionString()))
             {
@@ -90,7 +90,7 @@ namespace RecruitmentManagementSystem.DAL
                     cmd.Parameters.AddWithValue("@City", model.City);
                     cmd.Parameters.AddWithValue("@Username", model.Username);
                     cmd.Parameters.AddWithValue("@Password", model.Password);
-                    cmd.Parameters.AddWithValue("@Role",role);
+                    cmd.Parameters.AddWithValue("@Role", role);
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
@@ -192,6 +192,7 @@ namespace RecruitmentManagementSystem.DAL
                     cmd = conn.CreateCommand();
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "SPU_User";
+                    cmd.Parameters.AddWithValue("@UserId", model.UserId);
                     cmd.Parameters.AddWithValue("@FirstName", model.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", model.LastName);
                     cmd.Parameters.AddWithValue("@DateOfBirth", model.DateOfBirth);
@@ -243,10 +244,10 @@ namespace RecruitmentManagementSystem.DAL
             }
         }
 
-           /// <summary>
-           /// Deactivate
-           /// </summary>
-           /// <param name="id"></param>
+        /// <summary>
+        /// Deactivate user
+        /// </summary>
+        /// <param name="id"></param>
         public void Delete(int id)
         {
             using (conn = new SqlConnection(GetConnectionString()))
@@ -281,12 +282,12 @@ namespace RecruitmentManagementSystem.DAL
                     cmd = conn.CreateCommand();
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "SP_GetUserByID";
-                    cmd.Parameters.AddWithValue("@UserId",id);
+                    cmd.Parameters.AddWithValue("@UserId", id);
                     conn.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
                     if (dr.Read())
                     {
-                        userID = new Users 
+                        userID = new Users
                         {
                             UserId = Convert.ToInt32(dr["UserId"]),
                             FirstName = dr["FirstName"].ToString(),
@@ -363,7 +364,7 @@ namespace RecruitmentManagementSystem.DAL
         /// </summary>
         public string ValidateUser(string username, string password)
         {
-            string? role= string.Empty;
+            string? role = string.Empty;
             using (SqlConnection conn = new SqlConnection(GetConnectionString()))
             {
                 try
@@ -371,15 +372,15 @@ namespace RecruitmentManagementSystem.DAL
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.CommandText = "SP_ValidateUser"; 
+                        cmd.CommandText = "SP_ValidateUser";
                         cmd.Parameters.AddWithValue("@UserName", username);
-                        cmd.Parameters.AddWithValue("@Password", password); 
+                        cmd.Parameters.AddWithValue("@Password", password);
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
                             if (dr.Read())
                             {
-                                role = dr["Role"]?.ToString()??string.Empty;
+                                role = dr["Role"]?.ToString() ?? string.Empty;
                             }
                         }
                     }
@@ -415,7 +416,7 @@ namespace RecruitmentManagementSystem.DAL
                     cmd.Parameters.AddWithValue("@Experience", job.Experience);
                     cmd.Parameters.AddWithValue("@SalaryRange", job.SalaryRange);
                     cmd.Parameters.AddWithValue("@Deadline", job.Deadline);
-                    cmd.Parameters.AddWithValue("@JobStatus","Active");
+                    cmd.Parameters.AddWithValue("@JobStatus", "Active");
                     cmd.Parameters.AddWithValue("@Author", job.Author);
                     cmd.Parameters.AddWithValue("@PosterPhoto", job.Poster);
                     cmd.Parameters.AddWithValue("@PostingDate", job.PostingDate);
@@ -486,49 +487,49 @@ namespace RecruitmentManagementSystem.DAL
             }
             return jobList;
         }
-        /// <summary>
-        /// Get all applications
-        /// </summary>
-        /// <returns></returns>
-        public List<JobCreationsModel> GetAllApplications()
-        {
-            List<JobCreationsModel> jobApplications = new List<JobCreationsModel>();
-            using (conn = new SqlConnection(GetConnectionString()))
-            {
-                try
-                {
-                    cmd = conn.CreateCommand();
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandText = "SPR_JobPostings";
-                    conn.Open();
-                    SqlDataReader dr = cmd.ExecuteReader();
+        ///// <summary>
+        ///// Get all applications
+        ///// </summary>
+        ///// <returns></returns>
+        //public List<JobCreationsModel> GetAllApplications()
+        //{
+        //    List<JobCreationsModel> jobApplications = new List<JobCreationsModel>();
+        //    using (conn = new SqlConnection(GetConnectionString()))
+        //    {
+        //        try
+        //        {
+        //            cmd = conn.CreateCommand();
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            cmd.CommandText = "SPR_JobPostings";
+        //            conn.Open();
+        //            SqlDataReader dr = cmd.ExecuteReader();
 
-                    while (dr.Read())
-                    {
-                        JobCreationsModel applications = new JobCreationsModel();
-                        applications.JobId = Convert.ToInt32(dr["JobId"]);
-                        applications.JobTitle = dr["JobTitle"].ToString();
-                        applications.JobDescription = dr["JobDescription"].ToString();
-                        applications.RequiredSkills = dr["RequiredSkills"].ToString();
-                        applications.Experience = dr["Experience"].ToString();
-                        applications.SalaryRange = dr["SalaryRange"].ToString();
-                        applications.Deadline = Convert.ToDateTime(dr["Deadline"]);
-                        applications.JobStatus = dr["JobStatus"].ToString();
-                        applications.Author = Convert.ToInt32(dr["Author"]);
-                        jobApplications.Add(applications);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine($"Error occurred: {exception.Message}");
-                }
-                finally
-                {
-                    conn.Close();
-                }
-            }
-            return jobApplications;
-        }
+        //            while (dr.Read())
+        //            {
+        //                JobCreationsModel applications = new JobCreationsModel();
+        //                applications.JobId = Convert.ToInt32(dr["JobId"]);
+        //                applications.JobTitle = dr["JobTitle"].ToString();
+        //                applications.JobDescription = dr["JobDescription"].ToString();
+        //                applications.RequiredSkills = dr["RequiredSkills"].ToString();
+        //                applications.Experience = dr["Experience"].ToString();
+        //                applications.SalaryRange = dr["SalaryRange"].ToString();
+        //                applications.Deadline = Convert.ToDateTime(dr["Deadline"]);
+        //                applications.JobStatus = dr["JobStatus"].ToString();
+        //                applications.Author = Convert.ToInt32(dr["Author"]);
+        //                jobApplications.Add(applications);
+        //            }
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            Console.WriteLine($"Error occurred: {exception.Message}");
+        //        }
+        //        finally
+        //        {
+        //            conn.Close();
+        //        }
+        //    }
+        //    return jobApplications;
+        //}
         /// <summary>
         /// Get job by id
         /// </summary>
@@ -551,14 +552,15 @@ namespace RecruitmentManagementSystem.DAL
                     {
                         job = new JobCreationsModel
                         {
-                           JobId = Convert.ToInt32(dr["JobId"]),
-                           JobTitle = Convert.ToString(dr["JobTitle"]),
-                           JobDescription = Convert.ToString(dr["JobDescription"]),
-                           JobStatus = Convert.ToString(dr["JobStatus"]),
-                           RequiredSkills = Convert.ToString(dr["RequiredSkills"]),
-                           Experience = Convert.ToString(dr["Experience"]),
-                           SalaryRange = Convert.ToString(dr["SlaryRange"]),
-                           Deadline = Convert.ToDateTime(dr["Deadline"])
+                            JobId = Convert.ToInt32(dr["JobId"]),
+                            JobTitle = Convert.ToString(dr["JobTitle"]),
+                            JobDescription = Convert.ToString(dr["JobDescription"]),
+                            JobStatus = Convert.ToString(dr["JobStatus"]),
+                            RequiredSkills = Convert.ToString(dr["RequiredSkills"]),
+                            Experience = Convert.ToString(dr["Experience"]),
+                            SalaryRange = Convert.ToString(dr["SalaryRange"]),
+                            Deadline = Convert.ToDateTime(dr["Deadline"]),
+
                         };
                     }
                 }
@@ -602,6 +604,41 @@ namespace RecruitmentManagementSystem.DAL
                 {
                     conn.Close();
                 }
+            }
+        }
+        /// <summary>
+        /// Update jobs in admin
+        /// </summary>
+        /// <param name="jobs"></param>
+        public void UpdateJobs(JobCreationsModel jobs)
+        {
+            try
+            {
+                using (conn = new SqlConnection(GetConnectionString()))
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPU_Jobs";
+                    cmd.Parameters.AddWithValue("@JobId", jobs.JobId);
+                    cmd.Parameters.AddWithValue("@JobDescription", jobs.JobDescription);
+                    cmd.Parameters.AddWithValue("@RequiredSkills", jobs.RequiredSkills);
+                    cmd.Parameters.AddWithValue("@Experience", jobs.Experience);
+                    cmd.Parameters.AddWithValue("@SalaryRange", jobs.SalaryRange);
+                    cmd.Parameters.AddWithValue("@Deadline", jobs.Deadline);
+                    cmd.Parameters.AddWithValue("@PosterPhoto", jobs.Poster);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred: {ex.Message}");
+
+            }
+            finally
+            {
+                conn.Close();
             }
         }
     }
