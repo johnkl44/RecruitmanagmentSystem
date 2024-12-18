@@ -1,0 +1,47 @@
+﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
+@{
+    Layout = "CandidateLayout";
+}
+<h2>Current jobs</h2>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Job title</th>
+            <th>Description</th>
+            <th>Skill set</th>
+            <th>Experiance</th>
+            <th>Slary Range</th>
+            <th>Deadline</th>
+            <th>Poster</th>
+            <th>Posting Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var jobs in Model)
+        {
+            <tr>
+                <td>@jobs.JobTitle</td>
+                <td>@jobs.JobDescription</td>
+                <td>@jobs.RequiredSkills</td>
+                <td>@jobs.Experience</td>
+                <td>@jobs.SalaryRange</td>
+                <td>@jobs.Deadline.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <img src="data:image/jpeg;base64,@jobs.PosterPhotoBase64" alt="Job Poster" width="100" height="100" />
+                </td>
+                @* @(jobs.PostingDate != null ? jobs.PostingDate.Value.ToString("yyyy-MM-dd") : "N/A") *@
+                <td>    NUll </td>
+                <td>
+                    @Html.ActionLink("Apply", "#")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

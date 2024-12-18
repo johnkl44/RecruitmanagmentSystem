@@ -1,0 +1,17 @@
+﻿@model RecruitmentManagementSystem.Models.Users
+
+@{
+    Layout = "AdminLayout";
+}
+<h2>Settings</h2>
+@if (TempData["successMessage"] != null)
+{
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong> </strong> @TempData["successMessage"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}
+
+@Html.ActionLink("Change Password", "ChangePassword", "Admin") 
+@* @Html.ActionLink("Details", "#", new { @class = "btn btn-success" }) | *@
+@* @Html.ActionLink("Deactivate", "#", new { @class = "btn btn-danger" }) *@

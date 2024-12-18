@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (TempData["infoMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong> Alert : </strong> @TempData["infoMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+else if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong> Error : </strong> @TempData["errorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+else if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong> Sucess : </strong> @TempData["successMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}

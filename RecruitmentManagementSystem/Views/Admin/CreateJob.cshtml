@@ -1,0 +1,62 @@
+﻿@model RecruitmentManagementSystem.Models.JobCreationsModel
+@{
+    Layout = "AdminLayout";
+}
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Sign up</title>
+</head>
+<body>
+    <div>
+        <h2>Create Job</h2>
+        <form asp-action="CreateJob" asp-controller="Admin" method="post" enctype="multipart/form-data">
+
+            <div>
+                <label asp-for="JobTitle"></label>
+                <input asp-for="JobTitle" required />
+                <span asp-validation-for="JobTitle"></span>
+            </div>
+            <div>
+                <label asp-for="JobDescription"></label>
+                <textarea asp-for="JobDescription" required></textarea>
+                <span asp-validation-for="JobDescription"></span>
+            </div>
+            <div>
+                <label asp-for="RequiredSkills"></label>
+                <textarea asp-for="RequiredSkills" required></textarea>
+                <span asp-validation-for="RequiredSkills"></span>
+            </div>
+            <div>
+                <label asp-for="Experience"></label>
+                <input asp-for="Experience" required  />
+                <span asp-validation-for="Experience"></span>
+            </div>
+            <div>
+                <label asp-for="SalaryRange"></label>
+                <input asp-for="SalaryRange" required />
+                <span asp-validation-for="SalaryRange"></span>
+            </div>
+            <div>
+                <label asp-for="Deadline"></label>
+                <input asp-for="Deadline" required  type="date"/>
+                <span asp-validation-for="Deadline"></span>
+            </div>
+            <div>
+                <label asp-for="PosterPhoto"></label>
+                <input asp-for="PosterPhoto" type="file" />
+            </div>
+            <div>
+                <button type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+

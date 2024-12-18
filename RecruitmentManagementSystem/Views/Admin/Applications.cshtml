@@ -1,0 +1,42 @@
+﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
+@{
+    Layout = "AdminLayout";
+}
+<h2>All Registered Users</h2>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Job title</th>
+            <th>Description</th>
+            <th>Skill set</th>
+            <th>Experiance</th>
+            <th>Slary Range</th>
+            <th>Deadline</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var jobs in Model)
+        {
+            <tr>
+                <td>@jobs.</td>
+                <td>@jobs.</td>
+                <td>@jobs.</td>
+                <td>@jobs.</td>
+                <td>@jobs.</td>
+                <td>@jobs.</td>
+                <td>
+                    @Html.ActionLink("Edit", "#", new { @class = "btn btn-success" }) |
+                    @Html.ActionLink("Details", "#", new { @class = "btn btn-success" }) |
+                    @Html.ActionLink("Deactivate", "#", new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
