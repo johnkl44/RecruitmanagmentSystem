@@ -5,21 +5,58 @@
 @if (TempData["infoMessage"] != null)
 {
     <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <strong> Alert : </strong> @TempData["infoMessage"]
+        <strong>Info: </strong> @TempData["infoMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 else if (TempData["errorMessage"] != null)
 {
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <strong> Error : </strong> @TempData["errorMessage"]
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong> @TempData["errorMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 else if (TempData["successMessage"] != null)
 {
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <strong> Sucess : </strong> @TempData["successMessage"]
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success: </strong> @TempData["successMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
+
+<head>
+    <link href="~/css/style.css" rel="stylesheet" />
+</head>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <h3>About Us</h3>
+                <p>Learn about our organization and recruitment system.</p>
+                <a href="#" class="btn btn-primary">Read More</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h3>Sign In</h3>
+                <p>Access your account by entering your username and password.</p>
+                <a href="#" class="btn btn-primary">Sign In</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h3>Sign Up</h3>
+                <p>Create a new account to begin your job application process.</p>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h3>Contact Us</h3>
+                <p>Get in touch with us for any inquiries or support.</p>
+                <a href="#" class="btn btn-primary">Contact</a>
+            </div>
+        </div>
+    </div>
+</div>

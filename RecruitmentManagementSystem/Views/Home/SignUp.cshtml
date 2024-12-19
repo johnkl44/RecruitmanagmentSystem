@@ -51,23 +51,32 @@
                 <input asp-for="Address" required />
                 <span asp-validation-for="Address"></span>
             </div>
+            @* <select id="state" name="StateId" class="form-control"> *@
+            @*     <option value="">Select State</option> *@
+            @*     @foreach (var state in ViewBag.States as List<SelectListItem>) *@
+            @*     { *@
+            @*         <option value="@state.Value">@state.Text</option> *@
+            @*     } *@
+            @* </select> *@
+
+            @* <div> *@
+            @*     <label asp-for="City"></label> *@
+            @*     <select id="city" name="CityId" class="form-control"> *@
+            @*         <option value="">Select City</option> *@
+            @*     </select> *@
+            @*     <span asp-validation-for="City"></span> *@
+            @* </div> *@
+
             <div>
                 <label asp-for="State"></label>
-                <select id="stateDropdown" name="StateId">
-                    <option value="">Select State</option>
-                    @foreach (var state in ViewBag.States)
-                    {
-                        <option value="@state.Value">@state.Text</option>
-                    }
-                </select>
+                <input asp-for="State" required />
+                <span asp-validation-for="State"></span>
             </div>
             <div>
-                <label asp-for="Cities"></label>
-                <select id="cityDropdown" name="CityId">
-                    <option value="">Select City</option>
-                </select>
+                <label asp-for="City"></label>
+                <input asp-for="City" required />
+                <span asp-validation-for="City"></span>
             </div>
-            
 
             <div>
                 <label asp-for="Username"></label>
@@ -113,36 +122,25 @@
         }
     }
 
-    // Trigger GetCitiesByState when a state is selected
-    $('#stateDropdown').change(function () {
-        var stateId = $(this).val();
-        if (stateId) {
-            $.ajax({
-                url: '@Url.Action("GetCitiesByState", "Home")',
-                type: 'GET',
-                data: { stateId: stateId },
-                success: function (cities) {
-                    var cityDropdown = $('#cityDropdown');
-                    cityDropdown.empty();  // Clear existing options
-                    cityDropdown.append('<option value="">Select City</option>');  // Reset to default
-
-                    // Check if cities are returned
-                    if (cities && cities.length > 0) {
-                        // Populate city options
-                        $.each(cities, function (index, city) {
-                            cityDropdown.append('<option value="' + city.Value + '">' + city.Text + '</option>');
-                        });
-                },
-                error: function (error) {
-                    console.log("Error fetching cities:", error);
-                    alert("Error fetching cities. Please try again.");
-                }
-            });
-        } else {
-            $('#cityDropdown').empty().append('<option value="">Select City</option>');
+       $.ajax({
+        url: `/Home/GetCities?stateId=${stateId}`,
+        type: 'GET',
+        success: function (data) {
+            console.log(data); // Inspect the response in the console
+            if (data && data.length > 0) {
+                $('#city').empty();
+                $('#city').append('<option value="">Select City</option>');
+                $.each(data, function (index, city) {
+                    $('#city').append(`<option value="${city.value}">${city.text}</option>`);
+                });
+            } else {
+                alert("No cities found for the selected state.");
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('Error fetching cities: ' + error);
         }
     });
 
 
-
-</script>
+</script>   

@@ -78,10 +78,9 @@ namespace RecruitmentManagementSystem.Controllers
         {
             try
             {
-                var states = userDAL.GetStates();
-                ViewBag.States = states;
-
-                ViewBag.Cities = new List<SelectListItem>();
+                //var states = userDAL.GetStates();
+                //ViewBag.States = states;
+                //ViewBag.Cities = new List<SelectListItem>();
 
                 return View();
             }
@@ -99,8 +98,8 @@ namespace RecruitmentManagementSystem.Controllers
                 if (!ModelState.IsValid)
                 {
                     var states = userDAL.GetStates();
-                    ViewBag.States = states;
-                    ViewBag.Cities = new List<SelectListItem>();
+                    //ViewBag.States = states;
+                    //ViewBag.Cities = new List<SelectListItem>();
 
                     TempData["errorMessage"] = "Details not Valid";
                     return View();
@@ -114,9 +113,9 @@ namespace RecruitmentManagementSystem.Controllers
             {
                 TempData["errorMessage"] = ex.Message;
 
-                var states = userDAL.GetStates();
-                ViewBag.States = states;
-                ViewBag.Cities = new List<SelectListItem>(); 
+                //var states = userDAL.GetStates();
+                //ViewBag.States = states;
+                //ViewBag.Cities = new List<SelectListItem>(); 
 
                 return View(userSignUp);
             }
@@ -130,8 +129,8 @@ namespace RecruitmentManagementSystem.Controllers
         {
             try
             {
-                var cities = userDAL.GetCities(stateId); 
-                return View(cities); 
+                var cities = userDAL.GetCities(stateId);
+                return View(cities);
             }
             catch (Exception ex)
             {
@@ -139,11 +138,35 @@ namespace RecruitmentManagementSystem.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetStates()
+        {
+            var stateList = new Recruitment_DAL().GetStates(); 
+            return Json(stateList);
+        }
+
+
+        [HttpGet]
+        public IActionResult GetCities(int stateId)
+        {
+            try
+            {
+                var cityList = userDAL.GetCities(stateId); // Fetch cities from DAL
+                return Json(cityList); // Return as JSON
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }); // Return error as JSON if something goes wrong
+            }
+        }
 
         public IActionResult ContactUs()
         {
             return View();
         }
+
+       
+
     }
 }
 

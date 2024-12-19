@@ -154,7 +154,7 @@ namespace RecruitmentManagementSystem.DAL
                     var cmd = conn.CreateCommand();
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "SP_CityDropDown";
-                    cmd.Parameters.AddWithValue("@StateId", stateId);  // Filter by stateId
+                    cmd.Parameters.AddWithValue("@StateId", stateId);
 
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
@@ -171,12 +171,12 @@ namespace RecruitmentManagementSystem.DAL
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"An error occurred: {ex.Message}");
-                    throw;
+                    throw new Exception("Error fetching cities: " + ex.Message);
                 }
             }
             return cities;
         }
+
         /// <summary>
         /// Update User
         /// </summary>
@@ -485,49 +485,6 @@ namespace RecruitmentManagementSystem.DAL
             }
             return jobList;
         }
-        ///// <summary>
-        ///// Get all applications
-        ///// </summary>
-        ///// <returns></returns>
-        //public List<JobCreationsModel> GetAllApplications()
-        //{
-        //    List<JobCreationsModel> jobApplications = new List<JobCreationsModel>();
-        //    using (conn = new SqlConnection(GetConnectionString()))
-        //    {
-        //        try
-        //        {
-        //            cmd = conn.CreateCommand();
-        //            cmd.CommandType = CommandType.StoredProcedure;
-        //            cmd.CommandText = "SPR_JobPostings";
-        //            conn.Open();
-        //            SqlDataReader dr = cmd.ExecuteReader();
-
-        //            while (dr.Read())
-        //            {
-        //                JobCreationsModel applications = new JobCreationsModel();
-        //                applications.JobId = Convert.ToInt32(dr["JobId"]);
-        //                applications.JobTitle = dr["JobTitle"].ToString();
-        //                applications.JobDescription = dr["JobDescription"].ToString();
-        //                applications.RequiredSkills = dr["RequiredSkills"].ToString();
-        //                applications.Experience = dr["Experience"].ToString();
-        //                applications.SalaryRange = dr["SalaryRange"].ToString();
-        //                applications.Deadline = Convert.ToDateTime(dr["Deadline"]);
-        //                applications.JobStatus = dr["JobStatus"].ToString();
-        //                applications.Author = Convert.ToInt32(dr["Author"]);
-        //                jobApplications.Add(applications);
-        //            }
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            Console.WriteLine($"Error occurred: {exception.Message}");
-        //        }
-        //        finally
-        //        {
-        //            conn.Close();
-        //        }
-        //    }
-        //    return jobApplications;
-        //}
         /// <summary>
         /// Get job by id
         /// </summary>
@@ -637,6 +594,30 @@ namespace RecruitmentManagementSystem.DAL
             finally
             {
                 conn.Close();
+            }
+        }
+        public void DeleteJob(int id)
+        {
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPD_JobPostings";
+                    cmd.Parameters.AddWithValue("@JobId", id);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    //conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error occurred: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
             }
         }
     }

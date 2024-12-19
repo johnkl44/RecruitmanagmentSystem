@@ -40,8 +40,8 @@
                 <td>    NUll </td>
                 <td>
                     @Html.ActionLink("Edit", "UpdateJobs", new { id = jobs.JobId }) |
-                    @Html.ActionLink("Details", "#", new { @class = "btn btn-success" }) |
-                    @Html.ActionLink("Deactivate", "#", new { @class = "btn btn-danger" })
+                    @Html.ActionLink("Details", "#") |
+                    @Html.ActionLink("Deactivate", "DeleteJob", new { id = jobs.JobId })
                 </td>
             </tr>
         }

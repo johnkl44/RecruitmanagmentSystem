@@ -263,6 +263,48 @@ namespace RecruitmentManagementSystem.Controllers
             }
         }
         /// <summary>
+        /// Delete Job 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult DeleteJob(int id)
+        {
+            try
+            {
+                JobCreationsModel job = adminDAL.GetJobById(id);
+                if (job == null)
+                {
+                    TempData["errorMessage"] = $"User with ID {id} not found.";
+                    return RedirectToAction("ViewJobs");
+                }
+                return View(job);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error occurred while deactivating user: {ex.Message}";
+                return RedirectToAction("ViewJobs");
+            }
+        }
+
+        [HttpPost]
+        [ActionName("DeleteJob")]
+        public IActionResult DeleteJobConfirmation(int Id)
+        {
+            try
+            {
+                JobCreationsModel job = adminDAL.GetJobById(Id);
+
+                adminDAL.Delete(job.JobId);
+                TempData["successMessage"] = "Job deactivated successfully.";
+                return RedirectToAction("ViewJobs");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return RedirectToAction("ViewJobs");
+            }
+        }
+        /// <summary>
         /// Settings Page
         /// </summary>
         /// <returns></returns>

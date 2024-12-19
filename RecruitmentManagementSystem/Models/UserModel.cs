@@ -58,15 +58,5 @@ namespace RecruitmentManagementSystem.Models
         public List<SelectListItem>? States { get; set; } 
         public List<SelectListItem>? Cities { get; set; } 
     }
-    public class City
-    {
-        public int? CityId { get; set; }
-        public string? CityName { get; set; }
-    }
-    public class State
-    {
-        public int? StateId { get; set; }
-        public string? StateName { get; set; }
-    }
-
+   
 }
