@@ -177,8 +177,6 @@ namespace RecruitmentManagementSystem.DAL
             }
             return cities;
         }
-
-
         /// <summary>
         /// Update User
         /// </summary>

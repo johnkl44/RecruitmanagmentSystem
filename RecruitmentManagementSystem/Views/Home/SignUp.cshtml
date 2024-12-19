@@ -132,9 +132,6 @@
                         $.each(cities, function (index, city) {
                             cityDropdown.append('<option value="' + city.Value + '">' + city.Text + '</option>');
                         });
-                    } else {
-                        cityDropdown.append('<option value="">No Cities Available</option>');
-                    }
                 },
                 error: function (error) {
                     console.log("Error fetching cities:", error);
