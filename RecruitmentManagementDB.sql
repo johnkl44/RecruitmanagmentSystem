@@ -339,6 +339,24 @@ DECLARE @RowCount INT = 0
 	END CATCH
 END 
 
+EXEC SPD_JobPostings 8
+
+select * from tblJobPostings
+
+--- Get Job by id
+
+ALTER PROCEDURE SP_GetJobByID
+(
+@JobId INT
+)
+AS
+BEGIN
+	SELECT JobId,JobTitle,JobDescription,RequiredSkills,Experience,SalaryRange,Deadline,JobStatus,Author FROM tblJobPostings WITH(NOLOCK)
+	WHERE JobId= @JobId
+END 
+
+EXEC SP_GetJobByID 3
+
 ---==== Table Application =====
 ---  Create tblApplications table
 
@@ -381,17 +399,5 @@ BEGIN
 	END CATCH
 END 
 
---- Get Job by id
 
-ALTER PROCEDURE SP_GetJobByID
-(
-@JobId INT
-)
-AS
-BEGIN
-	SELECT JobId,JobTitle,JobDescription,RequiredSkills,Experience,SalaryRange,Deadline,JobStatus,Author FROM tblJobPostings WITH(NOLOCK)
-	WHERE JobId= @JobId
-END 
-
-EXEC SP_GetJobByID 3
 
