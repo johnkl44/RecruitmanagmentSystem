@@ -1,48 +1,42 @@
-﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
+﻿
+
+@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
 @{
     Layout = "AdminLayout";
 }
+
+<h2>Current Jobs</h2>
 
 @if (TempData["errorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["errorMessage"]</div>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Job title</th>
-            <th>Description</th>
-            <th>Skill set</th>
-            <th>Experiance</th>
-            <th>Slary Range</th>
-            <th>Deadline</th>
-            <th>Poster</th>
-            <th>Posting Date</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var jobs in Model)
-        {
-            <tr>
-                <td>@jobs.JobTitle</td>
-                <td>@jobs.JobDescription</td>
-                <td>@jobs.RequiredSkills</td>
-                <td>@jobs.Experience</td>
-                <td>@jobs.SalaryRange</td>
-                <td>@jobs.Deadline.ToString("yyyy-MM-dd")</td>
-                <td>
+<div class="card-container">
+    @foreach (var jobs in Model)
+    {
+        <div class="job-card">
+            <div class="card-header">
+                <div class="job-poster">
                     <img src="data:image/jpeg;base64,@jobs.PosterPhotoBase64" alt="Job Poster" width="100" height="100" />
-                </td>
-                @* @(jobs.PostingDate != null ? jobs.PostingDate.Value.ToString("yyyy-MM-dd") : "N/A") *@
-                <td>    NUll </td>
-                <td>
-                    @Html.ActionLink("Edit", "UpdateJobs", new { id = jobs.JobId }) |
-                    @Html.ActionLink("Details", "#") |
-                    @Html.ActionLink("Deactivate", "DeleteJob", new { id = jobs.JobId })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </div>
+                <h4>@jobs.JobTitle</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Description:</strong> @jobs.JobDescription</p>
+                <p><strong>Skills:</strong> @jobs.RequiredSkills</p>
+                <p><strong>Experience:</strong> @jobs.Experience</p>
+                <p><strong>Salary Range:</strong> @jobs.SalaryRange</p>
+                <p><strong>Deadline:</strong> @jobs.Deadline.ToString("yyyy-MM-dd")</p>
+                <p><strong>Posting Date:</strong> @(jobs.PostingDate.HasValue ? jobs.PostingDate.Value.ToString("yyyy-MM-dd") : "N/A")</p>
+               
+            </div>
+            <div class="card-footer">
+                <a href="@Url.Action("UpdateJobs", new { id = jobs.JobId })" class="btn btn-primary">Edit</a>
+                <a href="#" class="btn btn-secondary">Details</a>
+                <a href="@Url.Action("DeleteJob", new { id = jobs.JobId })" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    }
+</div>
+

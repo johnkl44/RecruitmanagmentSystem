@@ -28,34 +28,38 @@ else if (TempData["successMessage"] != null)
     <link href="~/css/style.css" rel="stylesheet" />
 </head>
 
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
+<div>
+    <div>
+        <div>
+            <div>
                 <h3>About Us</h3>
-                <p>Learn about our organization and recruitment system.</p>
-                <a href="#" class="btn btn-primary">Read More</a>
+                <p>Learn about our organization and recruitment system.
+                    <a asp-controller="Home" asp-action="AboutUs">About us</a>
+                </p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div>
+            <div>
                 <h3>Sign In</h3>
-                <p>Access your account by entering your username and password.</p>
-                <a href="#" class="btn btn-primary">Sign In</a>
+                <p>Access your account by entering your username and password.
+                    <a asp-controller="Home" asp-action="SignIn">Sign in</a>
+                </p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div>
+            <div>
                 <h3>Sign Up</h3>
-                <p>Create a new account to begin your job application process.</p>
-                <a href="#" class="btn btn-primary">Sign Up</a>
+                <p>Create a new account to begin your job application process.
+                    <a asp-controller="Home" asp-action="SignUp">Sign up</a>
+                </p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div>
+            <div>
                 <h3>Contact Us</h3>
-                <p>Get in touch with us for any inquiries or support.</p>
-                <a href="#" class="btn btn-primary">Contact</a>
+                <p>Get in touch with us for any inquiries or support.
+                    <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
+                </p>
             </div>
         </div>
     </div>

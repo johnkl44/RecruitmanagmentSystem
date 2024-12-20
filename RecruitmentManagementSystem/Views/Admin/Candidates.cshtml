@@ -2,6 +2,7 @@
 @{
     Layout = "AdminLayout";
 }
+
 <h2>All Registered Users</h2>
 
 @if (TempData["errorMessage"] != null)
@@ -9,20 +10,9 @@
     <div class="alert alert-danger">@TempData["errorMessage"]</div>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Username</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
+<div class="card-container">
+    @foreach (var user in Model)
+    {
         <div class="card">
             <h3>@user.FirstName @user.LastName</h3>
             <p><strong>Email:</strong> @user.Email</p>
@@ -32,6 +22,7 @@
                 @Html.ActionLink("Deactivate", "DeactivateUser", new { id = user.UserId }, new { @class = "btn" })
             </div>
         </div>
-        }
-    </tbody>
-</table>
+    }
+</div>
+
+

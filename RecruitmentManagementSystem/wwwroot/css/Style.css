@@ -1,4 +1,72 @@
-﻿/* card */
+﻿.job-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.job-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    width: calc(33.33% - 20px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+.card-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-body {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+    .card-body p {
+        margin: 5px 0;
+    }
+
+.job-poster img {
+    margin-top: 10px;
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+.card-footer {
+    text-align: right;
+}
+
+    .card-footer a {
+        margin-left: 5px;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        color: #fff;
+    }
+
+    .card-footer .btn-primary {
+        background-color: blue;
+    }
+
+    .card-footer .btn-secondary {
+        background-color: gray;
+    }   
+
+    .card-footer .btn-danger {
+        background-color: red;
+    }
+
+
+
+/* card */
 .card-container {
     display: flex;
     flex-wrap: wrap;
@@ -31,7 +99,7 @@
     }
         .card .btn:hover {
             background-color: #c82333;
-}
+        }
 
 
 .gender {
@@ -40,6 +108,9 @@
     align-items: center;
     margin-bottom: 15px;
 }
+    .gender input[type="radio"] {
+        margin-right: 5px;
+    }
 .row div h3 {
     font-size: 1.5em;
     margin-bottom: 10px;
@@ -48,6 +119,15 @@
 .row div p {
     font-size: 1em;
     color: #555;
+}
+
+.form-container {
+    background-color: lightyellow;
+    border-radius: 8px;
+    padding: 20px; 
+    max-width: 750px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 form {
@@ -70,7 +150,8 @@ button {
     width: auto; 
     max-width: 150px; 
     align-self: center; 
-    }
+}
+
 
 blockquote {
     font-style: italic;
@@ -103,12 +184,13 @@ footer {
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-color: aliceblue;
     color: #333;
     padding: 40px;
+    background-image: url('~/images/recruitlogo.webp');
 }
 
-h1, h2 {
+h1, h2 , h3 {
     color: #4CAF50;
     text-align: center;
     margin-bottom: 20px;
@@ -120,26 +202,26 @@ p {
     margin-bottom: 20px;
 }
 label {
-    font-size: 1.1rem;
-    color: #333;
+    font-size: 1.2rem;
+    color: black;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
 }
 
 input, textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid black;
     border-radius: 4px;
     margin-bottom: 15px;
     font-size: 1rem;
 }
 button {
-    background-color: #4CAF50;
+    background-color: greenyellow;
     color: #fff;
     border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
+    padding: 10px 40px;
+    border-radius: 7px;
     font-size: 1.1rem;
     cursor: pointer;
     width: 100%;
@@ -147,7 +229,7 @@ button {
 }
 
     button:hover {
-        background-color: #45a049;
+        background-color: forestgreen;
     }
 
 /*Layout*/
@@ -166,7 +248,7 @@ body {
 }
 
 .header {
-    background-color: #f1f1f1;
+    background-color: lightsteelblue;
     padding: 20px 10px;
 }
 
@@ -182,9 +264,9 @@ body {
         margin-right: 10px;
     }
 
-        .header a.logo {
-            font-size: 25px;
-            font-weight: bold;
+        .header img {
+            width:25px;
+            height:25px;
         }
 
         .header a:hover {
@@ -212,3 +294,71 @@ main {
     text-align: center;
     padding: 10px 0;
 }
+
+
+
+/* Profile */
+.container {
+    max-width: 100%;
+    margin-top: 40px;
+    padding: 0 15px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-card {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: deepskyblue;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-body {
+    padding: 30px;
+    font-size: 1.1rem;
+    background-color: linen;
+}
+
+.profile-detail {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #34495e;
+}
+
+    .profile-detail strong {
+        color: #2980b9; 
+        font-weight: bold;
+    }
+
+.btn-secondary {
+    background-color: #7f8c8d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+    .btn-secondary:hover {
+        background-color: #95a5a6;
+    }
+
+
+
+

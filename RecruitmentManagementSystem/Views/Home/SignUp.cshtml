@@ -11,7 +11,7 @@
     <title>User Sign up</title>
 </head>
 <body>
-    <div>
+    <div class="form-container">
         <h2>Sign up</h2>
         <form asp-action="Signup">
             <div>
@@ -29,7 +29,7 @@
                 <input asp-for="DateOfBirth" type="date" required />
                 <span asp-validation-for="DateOfBirth"></span>
             </div>
-            <div>
+            <div class="gender">
                 <label asp-for="Gender"></label>
                 <input asp-for="Gender" type="radio" value="Male" required /> Male
                 <input asp-for="Gender" type="radio" value="Female" required /> Female

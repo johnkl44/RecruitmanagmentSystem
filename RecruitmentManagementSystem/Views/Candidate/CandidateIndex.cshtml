@@ -1,45 +1,31 @@
 ﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
 
 @{
-	Layout = "CandidateLayout";
+    Layout = "CandidateLayout";
 }
 
+<h1 class="text-center">Candidate Home</h1>
+<h3 class="text-center">Welcome, @ViewBag.Username</h3>
 
-<table class="table">
-    @* <thead> *@
-    @*     <tr> *@
-    @*         <th>Job title</th> *@
-    @*         <th>Description</th> *@
-    @*         <th>Skill set</th> *@
-    @*         <th>Experiance</th> *@
-    @*         <th>Slary Range</th> *@
-    @*         <th>Deadline</th> *@
-    @*         <th>Poster</th> *@
-    @*         <th>Posting Date</th> *@
-    @*         <th>Action</th> *@
-    @*     </tr> *@
-    @* </thead> *@
-    <tbody>
-        @foreach (var jobs in Model)
-        {
-            <tr>
-                <td>@jobs.JobTitle</td>
-                @* <td>@jobs.JobDescription</td> *@
-                @* <td>@jobs.RequiredSkills</td> *@
-                @* <td>@jobs.Experience</td> *@
-                @* <td>@jobs.SalaryRange</td> *@
-                <td>@jobs.Deadline.ToString("yyyy-MM-dd")</td>
-                <td>
+<div class="card-container">
+    @foreach (var jobs in Model)
+    {
+        <div class="job-card">
+            <div class="card-header">
+                <div class="job-poster">
                     <img src="data:image/jpeg;base64,@jobs.PosterPhotoBase64" alt="Job Poster" width="100" height="100" />
-                </td>
-                @* @(jobs.PostingDate != null ? jobs.PostingDate.Value.ToString("yyyy-MM-dd") : "N/A") *@
-                @* <td>    NUll </td> *@
-                <td>
-                    @Html.ActionLink("Apply", "#")
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
+                </div>
+                <h4>@jobs.JobTitle</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Skills:</strong> @jobs.RequiredSkills</p>
+                <p><strong>Experience:</strong> @jobs.Experience</p>
+                <p><strong>Salary Range:</strong> @jobs.SalaryRange</p>
+                <p><strong>Deadline:</strong> @jobs.Deadline.ToString("yyyy-MM-dd")</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Candidate" asp-action="Applications" class="btn btn-secondary">Details</a>
+            </div>
+        </div>
+    }
+</div>
