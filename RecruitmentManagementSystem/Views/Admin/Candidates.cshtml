@@ -23,16 +23,15 @@
     <tbody>
         @foreach (var user in Model)
         {
-            <tr>
-                <td>@user.FirstName</td>
-                <td>@user.LastName</td>
-                <td>@user.Email</td>
-                <td>@user.Role</td>
-                <td>@user.Username</td>
-                <td>
-                    @Html.ActionLink("Deactivate", "DeactivateUser", new { id = user.UserId })
-                </td>        
-            </tr>
+        <div class="card">
+            <h3>@user.FirstName @user.LastName</h3>
+            <p><strong>Email:</strong> @user.Email</p>
+            <p><strong>Role:</strong> @user.Role</p>
+            <p><strong>Username:</strong> @user.Username</p>
+            <div>
+                @Html.ActionLink("Deactivate", "DeactivateUser", new { id = user.UserId }, new { @class = "btn" })
+            </div>
+        </div>
         }
     </tbody>
 </table>

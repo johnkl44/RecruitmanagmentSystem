@@ -3,55 +3,6 @@
 @{
     Layout = "AdminLayout";
 }
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>JobCreationsModel</h4>
-    <hr />
-    <dl>
-        <dt>
-            @Html.DisplayNameFor(model => model.JobId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.JobId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.JobTitle)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.JobTitle)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.JobDescription)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.JobDescription)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.RequiredSkills)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.RequiredSkills)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Experience)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Experience)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SalaryRange)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.SalaryRange)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Deadline)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Deadline)
-        </dd>
-       
-    </dl>
     
     <form asp-action="DeleteJob">
         <input type="submit" value="Delete" class="btn btn-danger" /> |

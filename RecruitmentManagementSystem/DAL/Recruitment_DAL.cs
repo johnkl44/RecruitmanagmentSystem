@@ -581,9 +581,6 @@ namespace RecruitmentManagementSystem.DAL
                     cmd.Parameters.AddWithValue("@SalaryRange", jobs.SalaryRange);
                     cmd.Parameters.AddWithValue("@Deadline", jobs.Deadline);
                     cmd.Parameters.AddWithValue("@PosterPhoto", jobs.Poster);
-
-
-
                 }
             }
             catch (Exception ex)
@@ -608,7 +605,6 @@ namespace RecruitmentManagementSystem.DAL
                     cmd.Parameters.AddWithValue("@JobId", id);
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    //conn.Close();
                 }
                 catch (Exception ex)
                 {
