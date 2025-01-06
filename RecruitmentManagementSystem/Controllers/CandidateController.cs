@@ -233,66 +233,6 @@ namespace RecruitmentManagementSystem.Controllers
         /// Change Candidate Password
         /// </summary>
         /// <returns></returns>
-        //public IActionResult ChangePassword()
-        //{
-        //    var username = HttpContext.Session.GetString("Username");
-        //    ViewBag.Username = username;
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
-        //{
-        //    var userId = HttpContext.Session.GetInt32("UserId");
-
-        //    if (userId == null)
-        //    {
-        //        TempData["errorMessage"] = "Session expired. Please log in again.";
-        //        return RedirectToAction("Login", "Account");
-        //    }
-
-        //    if ( string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
-        //    {
-        //        TempData["errorMessage"] = "All fields are required.";
-        //        return View();
-        //    }
-
-        //    if (newPassword != confirmPassword)
-        //    {
-        //        TempData["errorMessage"] = "New password and confirmation password do not match.";
-        //        return View();
-        //    }
-
-        //    try
-        //    {
-        //        var user = candidateDAL.GetUserById((int)userId);
-
-        //        if (user == null)
-        //        {
-        //            TempData["errorMessage"] = "User not found.";
-        //            return RedirectToAction("SignIn", "Home");
-        //        }
-        //        string decodeOldPassword = user.Decode(oldPassword);
-        //        if (user.Password != decodeOldPassword)
-        //        {
-        //            TempData["errorMessage"] = "Old password is incorrect.";
-        //            return View();
-        //        }
-
-        //        string encodedNewPassword = user.Encode(newPassword);
-        //        user.Password = encodedNewPassword;
-        //        candidateDAL.ChangePassword(user);
-
-        //        TempData["successMessage"] = "Password changed successfully!";
-        //        return RedirectToAction("Settings");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ExceptionLogging.SendErrorToText(ex, HttpContext);
-        //        TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
-        //        return View();
-        //    }
-        //}
         public IActionResult ChangePassword()
         {
             var username = HttpContext.Session.GetString("Username");
