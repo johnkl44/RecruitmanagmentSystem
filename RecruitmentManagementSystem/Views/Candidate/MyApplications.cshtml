@@ -1,0 +1,52 @@
+﻿@model List<RecruitmentManagementSystem.Models.ApplicationViewModel>
+@{
+    Layout = "CandidateLayout";
+}
+<h2>My Applications</h2>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+}
+
+@if (TempData["infoMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["infoMessage"]</div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="card-container">
+        @foreach (var app in Model)
+        {
+            <div class="job-card">
+                <div class="card-header">
+                    <h4>@app.JobTitle</h4>
+                </div>
+                <div class="card-body">
+                    @* Conditional Messages for Application Status *@
+                    @if (app.ApplicationStatus == "Shortlisted")
+                    {
+                        <p><strong>Congratulations!</strong> You have been shortlisted for <strong>@app.JobTitle</strong>.</p>
+                    }
+                    else if (app.ApplicationStatus == "Rejected")
+                    {
+                        <p><strong>We regret to inform you</strong> that your application for <strong>@app.JobTitle</strong> has not been selected.</p>
+                    }
+                    else
+                    {
+                        <p>Your application for <strong>@app.JobTitle</strong> is currently under review.</p>
+                    }
+                    <p><strong>Applied Date:</strong> @app.AppliedDate.ToString("yyyy-MM-dd")</p>
+                </div>
+                @* <div class="card-footer"> *@
+                @*     <a href="@Url.Action("DownloadResume", new { id = app.ApplicationID })" class="btn btn-secondary">Download Resume</a> *@
+                @* </div> *@
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No applications found.</p>
+}

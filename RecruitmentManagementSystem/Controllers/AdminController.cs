@@ -5,10 +5,10 @@ using RecruitmentManagementSystem.Models;
 using RecruitmentManagementSystem.DAL;
 using Microsoft.AspNetCore.Mvc.Core.Infrastructure;
 using System.Reflection.Metadata.Ecma335;
+using RecruitmentManagementSystem.Utilities;
 
 namespace RecruitmentManagementSystem.Controllers
 {
-
     public class AdminController : Controller
     {
 
@@ -30,9 +30,9 @@ namespace RecruitmentManagementSystem.Controllers
             }
            
             var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             var userId = HttpContext.Session.GetInt32("UserId");
             ViewBag.UserId = userId;
-            ViewBag.Username = username;
             return View();
         }
         /// <summary>
@@ -58,6 +58,8 @@ namespace RecruitmentManagementSystem.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View();
         }
 
@@ -100,7 +102,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View(job);
             }
         }
@@ -117,15 +120,18 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
             }
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View(users);
         }
         /// <summary>
         /// list all jobs in admin and Perform CURD operations
         /// </summary>
         /// <returns></returns>
-        public IActionResult ViewJobs()
+        public IActionResult ManageJobs()
         {
             List<JobCreationsModel> jobs = new List<JobCreationsModel>();
             try
@@ -134,8 +140,11 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
             }
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View(jobs);
         }
         /// <summary>
@@ -145,6 +154,8 @@ namespace RecruitmentManagementSystem.Controllers
         [HttpGet]
         public IActionResult AddAdminUser()
         {
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View();
         }
         [HttpPost]
@@ -156,13 +167,14 @@ namespace RecruitmentManagementSystem.Controllers
                 {
                     TempData["errorMessage"] = "Details not Valid";
                 }
-                adminDAL.SignUpUser(adminUser,"Admin");
+                adminDAL.SignUpUser(adminUser,"Admin",HttpContext);
                 TempData["successMessage"] = "Registration Successfull";
                 return RedirectToAction("AdminIndex");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View();
             }
         }
@@ -182,11 +194,14 @@ namespace RecruitmentManagementSystem.Controllers
                     TempData["errorMessage"] = $"User with ID {id} not found.";
                     return RedirectToAction("Candidates");
                 }
+                var username = HttpContext.Session.GetString("Username");
+                ViewBag.Username = username;
                 return View(user);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"Error occurred while deactivating user: {ex.Message}";
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return RedirectToAction("Candidates");
             }
         }
@@ -205,7 +220,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return RedirectToAction("Candidates");
             }
         }
@@ -223,14 +239,21 @@ namespace RecruitmentManagementSystem.Controllers
                 if (job == null)
                 {
                     TempData["errorMessage"] = $"Job with ID {id} not found.";
-                    return RedirectToAction("ViewJobs");
+                    return RedirectToAction("ManageJobs");
                 }
+                if (job.Poster != null && job.Poster.Length > 0)
+                {
+                    job.PosterPhotoBase64 = Convert.ToBase64String(job.Poster);
+                }
+                var username = HttpContext.Session.GetString("Username");
+                ViewBag.Username = username;
                 return View(job);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"Error occurred while deactivating user: {ex.Message}";
-                return RedirectToAction("ViewJobs");
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("ManageJobs");
             }
         }
         [HttpPost]
@@ -238,6 +261,7 @@ namespace RecruitmentManagementSystem.Controllers
         {
             try
             {
+               
                 if (!ModelState.IsValid)
                 {
                     TempData["errorMessage"] = "Invalid credentials";
@@ -252,13 +276,14 @@ namespace RecruitmentManagementSystem.Controllers
                         job.Poster = memoryStream.ToArray();
                     }
                 }
-                adminDAL.UpdateJobs(job);
+                adminDAL.UpdateJobs(job, HttpContext);// HttpContext for getting the error logs
                 TempData["successMessage"] = "Job successfully updated";
-                return RedirectToAction("ViewJobs");
+                return RedirectToAction("ManageJobs");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View(job);
             }
         }
@@ -274,15 +299,18 @@ namespace RecruitmentManagementSystem.Controllers
                 JobCreationsModel job = adminDAL.GetJobById(id);
                 if (job == null)
                 {
-                    TempData["errorMessage"] = $"User with ID {id} not found.";
-                    return RedirectToAction("ViewJobs");
+                    TempData["errorMessage"] = $"Job with ID {id} not found.";
+                    return RedirectToAction("ManageJobs");
                 }
+                var username = HttpContext.Session.GetString("Username");
+                ViewBag.Username = username;
                 return View(job);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"Error occurred while deactivating user: {ex.Message}";
-                return RedirectToAction("ViewJobs");
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("ManageJobs");
             }
         }
 
@@ -294,14 +322,15 @@ namespace RecruitmentManagementSystem.Controllers
             {
                 JobCreationsModel job = adminDAL.GetJobById(Id);
 
-                adminDAL.Delete(job.JobId);
+                adminDAL.DeleteJob(job.JobId);
                 TempData["successMessage"] = "Job deactivated successfully.";
-                return RedirectToAction("ViewJobs");
+                return RedirectToAction("ManageJobs");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
-                return RedirectToAction("ViewJobs");
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("ManageJobs");
             }
         }
         /// <summary>
@@ -310,6 +339,8 @@ namespace RecruitmentManagementSystem.Controllers
         /// <returns></returns>
         public IActionResult Settings()
         {
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View();
         }
         /// <summary>
@@ -318,6 +349,8 @@ namespace RecruitmentManagementSystem.Controllers
         /// <returns></returns>
         public IActionResult ChangePassword()
         {
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View();
         }
 
@@ -329,10 +362,10 @@ namespace RecruitmentManagementSystem.Controllers
             if (userId == null)
             {
                 TempData["errorMessage"] = "Session expired. Please log in again.";
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Login", "Home");
             }
 
-            if (string.IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            if ( string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
             {
                 TempData["errorMessage"] = "All fields are required.";
                 return View();
@@ -354,13 +387,14 @@ namespace RecruitmentManagementSystem.Controllers
                     return RedirectToAction("SignIn", "Home");
                 }
 
-                if (user.Password != oldPassword) 
-                {
-                    TempData["errorMessage"] = "Old password is incorrect.";
-                    return View();
-                }
-
-                user.Password = newPassword;
+                //if (user.Password != oldPassword) 
+                //{
+                //    TempData["errorMessage"] = "Old password is incorrect.";
+                //    return View();
+                //}
+                
+                string encodedNewPassword = user.Encode(newPassword);
+                user.Password = encodedNewPassword;
                 adminDAL.ChangePassword(user);
 
                 TempData["successMessage"] = "Password changed successfully!";
@@ -368,11 +402,55 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"An error occurred: {ex.Message}";
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View();
             }
         }
-       
-
+        /// <summary>
+        /// Get all applications
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Applications()
+        {
+            try
+            {
+                var applications = adminDAL.GetAllApplications();
+                var username = HttpContext.Session.GetString("Username");
+                ViewBag.Username = username;
+                return View(applications);
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return View(new List<ApplicationViewModel>());
+            }
+        }
+        /// <summary>
+        /// Approve or reject the application 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public IActionResult ApplicationDetails(int id)
+        {
+            var application = adminDAL.GetApplicationByID(id);
+            return View(application);
+        }
+        [HttpPost]
+        public IActionResult UpdateApplicationStatus(int id, string status)
+        {
+            try
+            {
+                adminDAL.UpdateApplicationStatus(id, status);
+                TempData["successMessage"] = "Application status updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
+            return RedirectToAction("Applications");
+        }
     }
 }

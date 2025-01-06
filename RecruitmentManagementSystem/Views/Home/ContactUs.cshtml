@@ -1,43 +1,42 @@
-﻿@{
+﻿@model RecruitmentManagementSystem.Models.ContactUsModel
+@{
 	Layout = "HomeLayout";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="~/css/style.css" rel="stylesheet" />
-    <title>Contact us</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Contact Us</title>
-    </head>
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert" role="alert">
+        <strong>Success: </strong> @TempData["successMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <body>
     <h1>Contact us</h1><hr />
     <p>If you have any questions, concerns, or feedback, please feel free to reach out to us. We are here to assist you.</p>
-
-    <h2>Contact Information</h2>
-    <p>
-        <strong>Email:</strong> support@recruitmangementhr.in<br>
-        <strong>Phone:</strong> +91 9632587410<br>
-        <strong>Address:</strong> Kumbalangi, Kochi, India
-    </p><hr />
-
     <h2>Send Us a Message</h2>
     <div class="form-container">
-        <form method="post" action="">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" name="name" required>
+        <form method="post" action="ContactUs">
+            <div>
+                <label asp-for="Name" ></label>
+                <input asp-for="Name" required onfocusout="checkFirstName()">
+            </div>
+           
+         
+            <label asp-for="EmailId"></label>
+            <input asp-for=EmailId required onfocusout="checkEmail()">
 
-            <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="message">Your Message:</label>
-            <textarea id="message" name="message" rows="4" required></textarea>
+            <label asp-for="UserMessage"></label>
+            <textarea asp-for="UserMessage" required></textarea>
 
             <button type="submit">Submit</button>
         </form>
     </div>
-  
+    <h2>Contact Information</h2>
+    <p> 
+        <strong>Email:</strong> support@recruitmangementhr.in<br>
+        <strong>Phone:</strong> +91 9632587410<br>
+        <strong>Address:</strong> Kumbalangi, Kochi, India
+    </p>
+    <hr />
 </body>
-</html>
+

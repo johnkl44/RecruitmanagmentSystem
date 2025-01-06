@@ -8,10 +8,10 @@ namespace RecruitmentManagementSystem.Models
     {
         [Key]
         public int JobId { get; set; }
-        [DisplayName("Job title")]
+        [DisplayName("Job Title")]
         [Required(ErrorMessage = "Job title is required.")]
         public string? JobTitle { get; set; }
-        [DisplayName("Job description")]
+        [DisplayName("Job Description")]
         [Required(ErrorMessage = "Job description required.")] 
         public string? JobDescription { get; set; }
         [DisplayName("Required skill set")]
@@ -30,9 +30,7 @@ namespace RecruitmentManagementSystem.Models
         public int Author { get; set; }
         public IFormFile? PosterPhoto { get; set; }
         public string? PosterPhotoBase64 { get; set; }
-
         public byte[]? Poster {  get; set; }
-
         public DateTime? PostingDate { get; set; }
     }
 }

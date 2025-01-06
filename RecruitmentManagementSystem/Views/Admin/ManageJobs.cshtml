@@ -1,6 +1,4 @@
-﻿
-
-@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
+﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
 @{
     Layout = "AdminLayout";
 }
@@ -33,7 +31,7 @@
             </div>
             <div class="card-footer">
                 <a href="@Url.Action("UpdateJobs", new { id = jobs.JobId })" class="btn btn-primary">Edit</a>
-                <a href="#" class="btn btn-secondary">Details</a>
+                @* <a href="#" class="btn btn-secondary">Details</a> *@
                 <a href="@Url.Action("DeleteJob", new { id = jobs.JobId })" class="btn btn-danger">Delete</a>
             </div>
         </div>

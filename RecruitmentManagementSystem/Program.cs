@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<Recruitment_DAL>();
+builder.Services.AddHttpContextAccessor();
 ///<summary>
 ///For session handling
 /// </summary>

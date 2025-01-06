@@ -278,13 +278,13 @@ EXEC SPR_JobPostings
 
 --- UPDATE JObPostings
 
-CREATE PROCEDURE SPU_Jobs
+ALTER PROCEDURE SPU_Jobs
 (
 	@JobId INT,
 	@JobTitle NVARCHAR(100),      
     @JobDescription NVARCHAR(MAX),       
     @RequiredSkills NVARCHAR(MAX),            
-    @Experiance NVARCHAR(50),        
+    @Experience  NVARCHAR(50),        
     @SalaryRange NVARCHAR(50),   
     @Deadline DATE, 
     @PosterPhoto VARBINARY(MAX)     
@@ -302,7 +302,7 @@ DECLARE @RowCount INT = 0
 						JobTitle = @JobTitle,      
 						JobDescription = @JobDescription,       
 						RequiredSkills = @RequiredSkills,            
-						Experience = @Experiance,        
+						Experience = @Experience ,        
 						SalaryRange = @SalaryRange,   
 						Deadline = @Deadline, 
 						PosterPhoto = @PosterPhoto     
@@ -351,7 +351,7 @@ ALTER PROCEDURE SP_GetJobByID
 )
 AS
 BEGIN
-	SELECT JobId,JobTitle,JobDescription,RequiredSkills,Experience,SalaryRange,Deadline,JobStatus,Author FROM tblJobPostings WITH(NOLOCK)
+	SELECT JobId,JobTitle,JobDescription,RequiredSkills,Experience,SalaryRange,Deadline,JobStatus,Author,PosterPhoto FROM tblJobPostings WITH(NOLOCK)
 	WHERE JobId= @JobId
 END 
 
@@ -364,24 +364,24 @@ CREATE TABLE tblApplications (
     ApplicationID INT IDENTITY PRIMARY KEY,
     CandidateID INT FOREIGN KEY REFERENCES tblUsers(UserId),
     JobID INT FOREIGN KEY REFERENCES tblJobPostings(JobId),
-    ResumeFile NVARCHAR(MAX),
-	ProfilePhoto NVARCHAR(MAX),
+    ResumeFile VARBINARY(MAX),
+	ProfilePhoto VARBINARY(MAX),
     ApplicationStatus NVARCHAR(20) NOT NULL CHECK (ApplicationStatus IN ('Pending', 'Reviewed', 'Shortlisted', 'Rejected')),
     AppliedDate DATE
     
 );
 
+
 SELECT * FROM tblApplications
 
 --- Insert into Application
 
-CREATE PROCEDURE SPI_Application
+ALTER PROCEDURE SPI_Application
 (
-	@ApplicationID INT,
     @CandidateID INT,
     @JobID INT ,
-    @ResumeFile NVARCHAR(MAX), 
-	@ProfilePhoto NVARCHAR(MAX),
+    @ResumeFile VARBINARY(MAX), 
+	@ProfilePhoto VARBINARY(MAX),
     @ApplicationStatus NVARCHAR(20),
     @AppliedDate DATE
 )
@@ -389,8 +389,8 @@ AS
 BEGIN
 	BEGIN TRY
 		BEGIN TRAN
-		INSERT INTO tblApplications(ApplicationID,CandidateID,JobID,ResumeFile,ProfilePhoto,ApplicationStatus,AppliedDate)
-		VALUES(@ApplicationID,@CandidateID,@JobID,@ResumeFile,@ProfilePhoto,@ApplicationStatus,@AppliedDate)
+		INSERT INTO tblApplications(CandidateID,JobID,ResumeFile,ProfilePhoto,ApplicationStatus,AppliedDate)
+		VALUES(@CandidateID,@JobID,@ResumeFile,@ProfilePhoto,@ApplicationStatus,@AppliedDate)
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
@@ -399,5 +399,164 @@ BEGIN
 	END CATCH
 END 
 
+EXEC SPI_Application 10, 3, NULL, NULL, 'Pending', '2024-10-24';
 
+--- Retriving submitted Applications admin
+
+ALTER PROCEDURE SPR_AdminViewApplications
+AS
+BEGIN
+    SELECT 
+        app.ApplicationID,
+        app.CandidateID,
+        u.FirstName AS CandidateFirstName,
+        u.LastName AS CandidateLastName,
+        u.Email AS CandidateEmail,
+        app.JobID,
+        job.JobTitle,
+        app.ApplicationStatus,
+        app.AppliedDate,
+        job.Author AS JobAuthor,
+        job.PosterPhoto,
+		app.ResumeFile,
+		app.ProfilePhoto
+
+    FROM 
+        tblApplications app
+    INNER JOIN 
+        tblUsers u ON app.CandidateID = u.UserId
+    INNER JOIN 
+        tblJobPostings job ON app.JobID = job.JobId
+    ORDER BY 
+        app.AppliedDate DESC;
+END;
+
+EXEC SPR_AdminViewApplications
+
+--===Updated Column From NVARCHAR TO VARBINARY===
+
+ALTER TABLE tblApplications ALTER COLUMN ResumeFile VARBINARY(MAX);
+
+ALTER TABLE tblApplications ADD ResumeFileBinary VARBINARY(MAX);
+
+UPDATE tblApplications
+SET ResumeFileBinary = CONVERT(VARBINARY(MAX), ProfilePhoto);
+
+ALTER TABLE tblApplications DROP COLUMN ProfilePhoto;
+
+EXEC sp_rename 'tblApplications.ResumeFileBinary', 'ProfilePhoto', 'COLUMN';
+
+EXEC sp_help 'tblApplications';
+
+ALTER TABLE tblApplications ADD ResumeFile VARBINARY(MAX);
+
+--Candidate Applications View
+
+CREATE PROCEDURE SPR_CandidateViewApplications
+(
+    @CandidateID INT
+)
+AS
+BEGIN
+    SELECT 
+        app.ApplicationID,
+        app.CandidateID,
+        u.FirstName AS CandidateFirstName,
+        u.LastName AS CandidateLastName,
+        u.Email AS CandidateEmail,
+        app.JobID,
+        job.JobTitle,
+        app.ApplicationStatus,
+        app.AppliedDate,
+        job.Author AS JobAuthor,
+        job.PosterPhoto,
+        app.ResumeFile,
+        app.ProfilePhoto
+    FROM 
+        tblApplications app
+    INNER JOIN 
+        tblUsers u ON app.CandidateID = u.UserId
+    INNER JOIN 
+        tblJobPostings job ON app.JobID = job.JobId
+    WHERE 
+        app.CandidateID = @CandidateID
+    ORDER BY 
+        app.AppliedDate DESC;
+END;
+
+EXEC SPR_CandidateViewApplications 22
+
+-- Update application status
+
+ALTER PROCEDURE SPU_ApplicationStatus
+    @ApplicationId INT,
+    @ApplicationStatus NVARCHAR(20)
+AS
+BEGIN
+    UPDATE tblApplications
+    SET 
+	ApplicationStatus = @ApplicationStatus
+    WHERE 
+	ApplicationId = @ApplicationId;
+END;
+
+--- Get Application bid
+
+CREATE PROCEDURE SPR_GetApplicationById
+(
+    @ApplicationID INT
+)
+AS
+BEGIN
+    SELECT 
+        app.ApplicationID,
+        app.CandidateID,
+        u.FirstName AS CandidateFirstName,
+        u.LastName AS CandidateLastName,
+        u.Email AS CandidateEmail,
+        app.JobID,
+        job.JobTitle,
+        app.ApplicationStatus,
+        app.AppliedDate,
+        job.Author AS JobAuthor,
+        job.PosterPhoto,
+        app.ResumeFile,
+        app.ProfilePhoto
+    FROM 
+        tblApplications app
+    INNER JOIN 
+        tblUsers u ON app.CandidateID = u.UserId
+    INNER JOIN 
+        tblJobPostings job ON app.JobID = job.JobId
+    WHERE 
+        app.ApplicationID = @ApplicationID
+    ORDER BY 
+        app.AppliedDate DESC;
+END;
+
+EXEC SPR_GetApplicationById 11
+
+--ContactUs 
+
+CREATE TABLE tblContactUS
+(
+ContactID INT PRIMARY KEY IDENTITY,
+Name NVARCHAR(50),
+EmailId NVARCHAR(50),
+UserMessage NVARCHAR(500),
+ResponseMessage NVARCHAR(500),
+ResponseStatus NVARCHAR(25) 
+);
+
+SELECT * FROM tblContactUS
+
+CREATE PROCEDURE SPI_ContactUs
+    @Name NVARCHAR(50),
+    @EmailId NVARCHAR(50),
+    @UserMessage NVARCHAR(500)
+AS
+BEGIN
+    INSERT INTO tblContactUS (Name, EmailId, UserMessage, ResponseMessage, ResponseStatus)
+    VALUES (@Name, @EmailId, @UserMessage, NULL, 'Pending');
+END;
 

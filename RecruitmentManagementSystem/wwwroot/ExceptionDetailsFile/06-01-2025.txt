@@ -1,0 +1,115 @@
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 12:40:31
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 12:40:38
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 12:43:08
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 12:43:15
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 12:43:31
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 13:01:15
+
+Error Line No: ssword)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.CandidateController.ChangePassword(String oldPassword, String newPassword, String confirmPassword)
+
+Error Page URL: /Candidate/ChangePassword
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 06-01-2025 13:46:57
+
+Error Line No: ine 337
+
+Error Message: Value cannot be null. (Parameter 's')
+
+Exception Type: System.ArgumentNullException
+
+Error Location:    at System.ArgumentNullException.Throw(String paramName)
+   at System.Text.Encoding.GetBytes(String s)
+   at RecruitmentManagementSystem.Controllers.CandidateController.HashPassword(String password) in E:\Dot Net\.vs\Dot Net\Dot NET Core\RecruitmentManagementSystem\RecruitmentManagementSystem\Controllers\CandidateController.cs:line 371
+   at RecruitmentManagementSystem.Controllers.CandidateController.VerifyPassword(String storedHash, String inputPassword) in E:\Dot Net\.vs\Dot Net\Dot NET Core\RecruitmentManagementSystem\RecruitmentManagementSystem\Controllers\CandidateController.cs:line 363
+   at RecruitmentManagementSystem.Controllers.CandidateController.ChangePassword(String oldPassword, String newPassword, String confirmPassword) in E:\Dot Net\.vs\Dot Net\Dot NET Core\RecruitmentManagementSystem\RecruitmentManagementSystem\Controllers\CandidateController.cs:line 337
+
+Error Page URL: /Candidate/ChangePassword
+
+
+----------------------------------------

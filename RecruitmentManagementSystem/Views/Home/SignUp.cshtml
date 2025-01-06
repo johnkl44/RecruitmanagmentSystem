@@ -16,17 +16,17 @@
         <form asp-action="Signup">
             <div>
                 <label asp-for="FirstName"></label>
-                <input asp-for="FirstName" required />
+                <input asp-for="FirstName" required onfocusout="checkFirstName()" />
                 <span asp-validation-for="FirstName"></span>
             </div>
             <div>
                 <label asp-for="LastName"></label>
-                <input asp-for="LastName" required />
+                <input asp-for="LastName" required onfocusout="checkLastName()" />
                 <span asp-validation-for="LastName"></span>
             </div>
             <div>
                 <label asp-for="DateOfBirth"></label>
-                <input asp-for="DateOfBirth" type="date" required />
+                <input asp-for="DateOfBirth" type="date" id="dob" required />
                 <span asp-validation-for="DateOfBirth"></span>
             </div>
             <div class="gender">
@@ -38,12 +38,12 @@
             </div>
             <div>
                 <label asp-for="PhoneNumber"></label>
-                <input asp-for="PhoneNumber" required />
+                <input asp-for="PhoneNumber" required onfocusout="checkPhoneNumber()" />
                 <span asp-validation-for="PhoneNumber"></span>
             </div>
             <div>
                 <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" required />
+                <input asp-for="Email" type="email" required onfocusout="checkEmail()" />
                 <span asp-validation-for="Email"></span>
             </div>
             <div>
@@ -85,7 +85,7 @@
             </div>
             <div>
                 <label asp-for="Password"></label>
-                <input asp-for="Password" type="password" required" />
+                <input asp-for="Password" type="password" required" onfocusout="checkPassword()" />
                 <span asp-validation-for="Password"></span>
             </div>
             <div>
@@ -98,49 +98,10 @@
                 <button type="submit">Sign Up</button>
             </div>
         </form>
+        <div>
+            <p>Already have an account? <a asp-action="Signin">Sign In</a></p>
+        </div>
     </div>
 </body>
 </html>
 
-<script>
-    function checkConfirmPassword() {
-        const passwordInput = document.getElementById("Password");
-        const confirmPasswordInput = document.getElementById("ConfirmPassword");
-
-        const passwordValue = passwordInput.value.trim();
-        const confirmPasswordValue = confirmPasswordInput.value.trim();
-
-        if (confirmPasswordValue === "") {
-            setError(confirmPasswordInput, "Please confirm your password.");
-        }
-
-        else if (confirmPasswordValue !== passwordValue) {
-            setError(confirmPasswordInput, "Passwords do not match.");
-        }
-        else {
-            setSuccess(confirmPasswordInput);
-        }
-    }
-
-       $.ajax({
-        url: `/Home/GetCities?stateId=${stateId}`,
-        type: 'GET',
-        success: function (data) {
-            console.log(data); // Inspect the response in the console
-            if (data && data.length > 0) {
-                $('#city').empty();
-                $('#city').append('<option value="">Select City</option>');
-                $.each(data, function (index, city) {
-                    $('#city').append(`<option value="${city.value}">${city.text}</option>`);
-                });
-            } else {
-                alert("No cities found for the selected state.");
-            }
-        },
-        error: function (xhr, status, error) {
-            alert('Error fetching cities: ' + error);
-        }
-    });
-
-
-</script>   

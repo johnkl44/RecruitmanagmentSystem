@@ -4,8 +4,23 @@
     Layout = "CandidateLayout";
 }
 
-<h1 class="text-center">Candidate Home</h1>
-<h3 class="text-center">Welcome, @ViewBag.Username</h3>
+<head>
+    <link href="~/css/style.css" rel="stylesheet" />
+</head>
+
+<div>
+    <div>
+        <div class="banner text-center">
+            <img src="~/images/recruitment-banner.webp" alt="Recruitment Management Banner" class="img-fluid">
+
+            <div class="banner-overlay">
+                <h1></h1>
+                <p>Streamlining your hiring process efficiently and securely.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="card-container">
     @foreach (var jobs in Model)

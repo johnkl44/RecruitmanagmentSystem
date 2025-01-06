@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Mono.TextTemplating;
 using NuGet.Protocol.Plugins;
 using RecruitmentManagementSystem.Models;
+using RecruitmentManagementSystem.Utilities;
 
 namespace RecruitmentManagementSystem.DAL
 {
@@ -70,7 +71,7 @@ namespace RecruitmentManagementSystem.DAL
         /// Register User
         /// </summary>
         /// <param name="model"></param>
-        public void SignUpUser(Users model, string role)
+        public void SignUpUser(Users model, string role, HttpContext context)
         {
             using (conn = new SqlConnection(GetConnectionString()))
             {
@@ -339,9 +340,18 @@ namespace RecruitmentManagementSystem.DAL
                         user = new Users
                         {
                             UserId = Convert.ToInt32(dr["UserId"]),
-                            Username = dr["Username"].ToString(),
                             FirstName = dr["FirstName"].ToString(),
                             LastName = dr["LastName"].ToString(),
+                            DateOfBirth = Convert.ToDateTime(dr["DateOfBirth"]),
+                            Gender = dr["Gender"].ToString(),
+                            PhoneNumber = dr["PhoneNumber"].ToString(),
+                            Email = dr["Email"].ToString(),
+                            Address = dr["Address"].ToString(),
+                            State = dr["State"].ToString(),
+                            City = dr["City"].ToString(),
+                            Username = dr["Username"].ToString(),
+                            Password = dr["Password"].ToString(),
+                            Role = dr["Role"].ToString(),
                         };
                     }
                 }
@@ -515,7 +525,7 @@ namespace RecruitmentManagementSystem.DAL
                             Experience = Convert.ToString(dr["Experience"]),
                             SalaryRange = Convert.ToString(dr["SalaryRange"]),
                             Deadline = Convert.ToDateTime(dr["Deadline"]),
-
+                            Poster = dr["PosterPhoto"] as byte[],
                         };
                     }
                 }
@@ -530,42 +540,13 @@ namespace RecruitmentManagementSystem.DAL
             }
             return job;
         }
-        /// <summary>
-        ///  Applying application
-        /// </summary>
-        /// <param name="job"></param>
-        public void ApplyApplication(ApplicationModel application)
-        {
-            using (conn = new SqlConnection(GetConnectionString()))
-            {
-                try
-                {
-                    cmd = conn.CreateCommand();
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandText = "SP_JobCreation";
-                    cmd.Parameters.AddWithValue("@CandidateId", application.CandidateId);
-                    cmd.Parameters.AddWithValue("@AppliedDate", application.AppliedDate);
-                    cmd.Parameters.AddWithValue("@Resume", application.Resume);
-                    cmd.Parameters.AddWithValue("@Photo", application.Photo);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine($"Error occurred: {exception.Message}");
-                    throw;
-                }
-                finally
-                {
-                    conn.Close();
-                }
-            }
-        }
+      
+       
         /// <summary>
         /// Update jobs in admin
         /// </summary>
         /// <param name="jobs"></param>
-        public void UpdateJobs(JobCreationsModel jobs)
+        public void UpdateJobs(JobCreationsModel jobs, HttpContext context)
         {
             try
             {
@@ -575,19 +556,21 @@ namespace RecruitmentManagementSystem.DAL
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "SPU_Jobs";
                     cmd.Parameters.AddWithValue("@JobId", jobs.JobId);
+                    cmd.Parameters.AddWithValue("@JobTitle", jobs.JobTitle);
                     cmd.Parameters.AddWithValue("@JobDescription", jobs.JobDescription);
                     cmd.Parameters.AddWithValue("@RequiredSkills", jobs.RequiredSkills);
                     cmd.Parameters.AddWithValue("@Experience", jobs.Experience);
                     cmd.Parameters.AddWithValue("@SalaryRange", jobs.SalaryRange);
                     cmd.Parameters.AddWithValue("@Deadline", jobs.Deadline);
                     cmd.Parameters.AddWithValue("@PosterPhoto", jobs.Poster);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error occurred: {ex.Message}");
-
-            }
+            //catch (Exception ex)
+            //{
+            //    ExceptionLogging.SendErrorToText(ex, context);
+            //}
             finally
             {
                 conn.Close();
@@ -616,5 +599,251 @@ namespace RecruitmentManagementSystem.DAL
                 }
             }
         }
+        /// <summary>
+        ///  Applying application
+        /// </summary>
+        /// <param name="job"></param>
+        public void ApplyApplication(ApplicationModel application)
+        {
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPI_Application";
+                    cmd.Parameters.AddWithValue("@CandidateId", application.CandidateId);
+                    cmd.Parameters.AddWithValue("@JobId", application.JobId);
+                    cmd.Parameters.AddWithValue("@AppliedDate", application.AppliedDate);
+                    cmd.Parameters.AddWithValue("@ResumeFile", application.Resume);
+                    cmd.Parameters.AddWithValue("@ProfilePhoto", application.Photo);
+                    cmd.Parameters.AddWithValue("@ApplicationStatus", "Pending");    
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine($"Error occurred: {exception.Message}");
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+        /// <summary>
+        /// Retriving all submitted applications by candidates in admin
+        /// </summary>
+        /// <returns></returns>
+        public List<ApplicationViewModel> GetAllApplications()
+        {
+            List<ApplicationViewModel> applications = new List<ApplicationViewModel>();
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPR_AdminViewApplications";
+                    conn.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+
+                    while (dr.Read())
+                    {
+                        var application = new ApplicationViewModel
+                        {
+                            ApplicationID = dr["ApplicationID"] != DBNull.Value ? Convert.ToInt32(dr["ApplicationID"]) : null,
+                            CandidateID = dr["CandidateID"] != DBNull.Value ? Convert.ToInt32(dr["CandidateID"]) : null,
+                            CandidateFirstName = dr["CandidateFirstName"]?.ToString(),
+                            CandidateLastName = dr["CandidateLastName"]?.ToString(),
+                            CandidateEmail = dr["CandidateEmail"]?.ToString(),
+                            JobID = dr["JobID"] != DBNull.Value ? Convert.ToInt32(dr["JobID"]) : null,
+                            JobTitle = dr["JobTitle"]?.ToString(),
+                            ApplicationStatus = dr["ApplicationStatus"]?.ToString(),
+                            AppliedDate = dr["AppliedDate"] != DBNull.Value ? Convert.ToDateTime(dr["AppliedDate"]) : default,
+
+                            ProfilePhoto = dr["ProfilePhoto"] != DBNull.Value
+                                ? Convert.ToBase64String((byte[])dr["ProfilePhoto"])
+                                : null,
+
+                            ResumeFile = dr["ResumeFile"] != DBNull.Value
+                                ? Convert.ToBase64String((byte[])dr["ResumeFile"])
+                                : null,
+
+                            PosterPhoto = dr["PosterPhoto"] != DBNull.Value
+                                ? Convert.ToBase64String((byte[])dr["PosterPhoto"])
+                                : null
+                        };
+
+                        applications.Add(application);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return applications;
+        }
+        /// <summary>
+        /// Get application by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ApplicationViewModel GetApplicationByID(int id)
+        {
+            ApplicationViewModel? application = null;
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPR_GetApplicationById";
+                    cmd.Parameters.AddWithValue("@ApplicationId", id);
+                    conn.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.Read())
+                    {
+                        application = new ApplicationViewModel
+                        {
+                            ApplicationID = Convert.ToInt32(dr["ApplicationID"]),
+                            CandidateID = Convert.ToInt32(dr["CandidateID"]),
+                            CandidateFirstName = dr["CandidateFirstName"].ToString(),
+                            CandidateLastName = dr["CandidateLastName"].ToString(),
+                            CandidateEmail = dr["CandidateEmail"].ToString(),
+                            JobID = Convert.ToInt32(dr["JobID"]),
+                            JobTitle = dr["JobTitle"].ToString(),
+                            ApplicationStatus = dr["ApplicationStatus"].ToString(),
+                            AppliedDate = Convert.ToDateTime(dr["AppliedDate"]),
+                            PosterPhoto = dr["PosterPhoto"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["PosterPhoto"]) : null,
+                            ResumeFile = dr["ResumeFile"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["ResumeFile"]) : null,
+                            ProfilePhoto = dr["ProfilePhoto"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["ProfilePhoto"]) : null
+
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error occurred: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return application;
+        }
+        /// <summary>
+        /// Update application status by admin
+        /// </summary>
+        /// <param name="id"></param>
+        public void UpdateApplicationStatus(int id, string status)
+        {
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPU_ApplicationStatus";
+                    cmd.Parameters.AddWithValue("@ApplicationId", id);
+                    cmd.Parameters.AddWithValue("@ApplicationStatus",status );
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error occurred: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+        /// <summary>
+        /// Reriving Submitted applications Candidate
+        /// </summary>
+        /// <param name="candidateId"></param>
+        /// <returns></returns>
+        public List<ApplicationViewModel> GetApplicationsByCandidateId(int candidateId)
+        {
+            List<ApplicationViewModel> applications = new List<ApplicationViewModel>();
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPR_CandidateViewApplications";
+                    cmd.Parameters.AddWithValue("@CandidateID", candidateId);
+
+                    conn.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+
+                    while (dr.Read())
+                    {
+                        applications.Add(new ApplicationViewModel
+                        {
+                            ApplicationID = Convert.ToInt32(dr["ApplicationID"]),
+                            CandidateID = Convert.ToInt32(dr["CandidateID"]),
+                            CandidateFirstName = dr["CandidateFirstName"].ToString(),
+                            CandidateLastName = dr["CandidateLastName"].ToString(),
+                            CandidateEmail = dr["CandidateEmail"].ToString(),
+                            JobID = Convert.ToInt32(dr["JobID"]),
+                            JobTitle = dr["JobTitle"].ToString(),
+                            ApplicationStatus = dr["ApplicationStatus"].ToString(),
+                            AppliedDate = Convert.ToDateTime(dr["AppliedDate"]),
+                            PosterPhoto = dr["PosterPhoto"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["PosterPhoto"]) : null,
+                            ResumeFile = dr["ResumeFile"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["ResumeFile"]) : null,
+                            ProfilePhoto = dr["ProfilePhoto"] != DBNull.Value ? Convert.ToBase64String((byte[])dr["ProfilePhoto"]) : null
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return applications;
+        }
+        public void ContactUs(ContactUsModel contact)
+        {
+            using (conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    cmd = conn.CreateCommand();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "SPI_ContactUs";
+                    cmd.Parameters.AddWithValue("@Name", contact.Name);
+                    cmd.Parameters.AddWithValue("@EmailId", contact.EmailId);
+                    cmd.Parameters.AddWithValue("@UserMessage", contact.UserMessage);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine($"Error occurred: {exception.Message}");
+                    throw;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+
     }
 }

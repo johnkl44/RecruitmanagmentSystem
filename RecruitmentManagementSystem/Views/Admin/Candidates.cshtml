@@ -19,7 +19,7 @@
             <p><strong>Role:</strong> @user.Role</p>
             <p><strong>Username:</strong> @user.Username</p>
             <div>
-                @Html.ActionLink("Deactivate", "DeactivateUser", new { id = user.UserId }, new { @class = "btn" })
+                @Html.ActionLink("Deactivate", "DeactivateUser", new { id = user.UserId }, new { @class = "btn btn-primary" })
             </div>
         </div>
     }

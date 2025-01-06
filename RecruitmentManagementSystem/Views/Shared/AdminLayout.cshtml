@@ -3,21 +3,25 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
+	<title>@ViewBag.Title</title>
     <link href="/css/style.css" rel="stylesheet" />
+    <script src="~/js/validations.js"></script>
 </head>
 <body>
     <header class="header">
         <nav>
             <a asp-controller="Admin" asp-action="AdminIndex"><img src="~/images/recruitlogo.webp" /></a>
+            <a asp-controller="Admin" asp-action="Index">Recruit Queue</a>
             <div class="header-right">
                 <a asp-controller="Admin" asp-action="AdminIndex">Home</a>
-                <a asp-controller="Admin" asp-action="#">Applications</a>
                 <a asp-controller="Admin" asp-action="CreateJob">Create job</a>
+                <a asp-controller="Admin" asp-action="ManageJobs">Manage Jobs</a>
+                <a asp-controller="Admin" asp-action="Applications">Applications</a>
                 <a asp-controller="Admin" asp-action="Candidates">Candidates</a>
                 <a asp-controller="Admin" asp-action="AddAdminUser">Add admin</a>
                 <a asp-controller="Admin" asp-action="Settings">Settings</a>
-                <a asp-controller="Admin" asp-action="ViewJobs">View jobs</a>
+                @* <span>@ViewBag.Username</span> *@
+
                 <a asp-controller="Admin" asp-action="Logout">Logout</a>
             </div>
         </nav>

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RecruitmentManagementSystem.DAL;
 using RecruitmentManagementSystem.Models;
+using RecruitmentManagementSystem.Utilities;
 
 namespace RecruitmentManagementSystem.Controllers
 {
@@ -40,20 +43,21 @@ namespace RecruitmentManagementSystem.Controllers
                 }
 
                 Users validUser = userDAL.GetUserByUsername(user.Username);
+
                 if (validUser == null)
                 {
-                    TempData["errorMessage"] = "User not found.";
+                    TempData["ErrorMessage"] = "Invalid Username or Password.";
                     return View(user);
                 }
 
-                var role = userDAL.ValidateUser(user.Username,user.Password);
-                if (!string.IsNullOrEmpty(role))
+                string decodedPassword = validUser.Decode(validUser.Password);
+                if (decodedPassword == user.Password)
                 {
-                    HttpContext.Session.SetString("Role", role);
-                    HttpContext.Session.SetString("Username", validUser.Username); 
-                    HttpContext.Session.SetInt32("UserId", validUser.UserId); 
+                    HttpContext.Session.SetString("Role", validUser.Role);
+                    HttpContext.Session.SetString("Username", validUser.Username);
+                    HttpContext.Session.SetInt32("UserId", validUser.UserId);
 
-                    return RedirectToAction(role == "Admin" ? "AdminIndex" : "CandidateIndex", role == "Admin" ? "Admin" : "Candidate");
+                    return RedirectToAction(validUser.Role == "Admin" ? "AdminIndex" : "CandidateIndex", validUser.Role == "Admin" ? "Admin" : "Candidate");
                 }
                 else
                 {
@@ -63,6 +67,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 TempData["errorMessage"] = $"An error occurred: {ex.Message}";
                 return View(user);
             }
@@ -86,7 +92,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"Error loading signup page: {ex.Message}";
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return RedirectToAction("Error");
             }
         }
@@ -104,19 +111,19 @@ namespace RecruitmentManagementSystem.Controllers
                     TempData["errorMessage"] = "Details not Valid";
                     return View();
                 }
-                userDAL.SignUpUser(userSignUp, "Candidate");
+                userSignUp.Password = userSignUp.Encode(userSignUp.Password);
+                userDAL.SignUpUser(userSignUp, "Candidate", HttpContext);
 
                 TempData["successMessage"] = "Registration Successful";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
-
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 //var states = userDAL.GetStates();
                 //ViewBag.States = states;
                 //ViewBag.Cities = new List<SelectListItem>(); 
-
                 return View(userSignUp);
             }
         }
@@ -151,22 +158,43 @@ namespace RecruitmentManagementSystem.Controllers
         {
             try
             {
-                var cityList = userDAL.GetCities(stateId); // Fetch cities from DAL
-                return Json(cityList); // Return as JSON
+                var cityList = userDAL.GetCities(stateId);
+                return Json(cityList);
             }
             catch (Exception ex)
             {
-                return Json(new { error = ex.Message }); // Return error as JSON if something goes wrong
+                return Json(new { error = ex.Message }); 
             }
         }
-
+        [HttpGet]
         public IActionResult ContactUs()
         {
             return View();
         }
+        [HttpPost]
+        public ActionResult ContactUs(ContactUsModel contact)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["errorMessage"] = "Details not Valid";
+                    return View();
+                }
+                userDAL.ContactUs(contact);
 
-       
+                TempData["successMessage"] = "Your Message Sent Successfully!";
+                return RedirectToAction("ContactUS");
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return View();
+            }
 
+        }
+            
     }
 }
 

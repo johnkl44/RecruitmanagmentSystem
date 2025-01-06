@@ -26,7 +26,8 @@
                 <p><strong>Deadline:</strong> @jobs.Deadline.ToString("yyyy-MM-dd")</p>
             </div>
             <div class="card-footer">
-                <a asp-controller="Candidate" asp-action="Applications" class="btn btn-primary">Apply</a>
+                <a href="@Url.Action("ApplyforJob", new { id = jobs.JobId })" class="btn btn-primary">Apply</a>
+
             </div>
         </div>
     }

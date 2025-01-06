@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagementSystem.DAL;
 using RecruitmentManagementSystem.Models;
+using RecruitmentManagementSystem.Utilities;
 
 namespace RecruitmentManagementSystem.Controllers
 {
@@ -27,7 +30,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
             }
             return View(jobs);
         }
@@ -47,7 +51,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = ex.Message;
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
             }
             return View(jobs);
         }
@@ -93,7 +98,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception exception)
             {
-                TempData["errorMessage"] = exception.Message;
+                ExceptionLogging.SendErrorToText(exception, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View(user);
             }
         }
@@ -118,7 +124,8 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception exception)
             {
-                TempData["errorMessage"] = exception.Message;
+                ExceptionLogging.SendErrorToText(exception, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View();
             }
         }
@@ -128,20 +135,25 @@ namespace RecruitmentManagementSystem.Controllers
         /// <param name="jobId"></param>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult ApplyforJob(int jobId)
+        public IActionResult ApplyforJob(int id)
         {
-            var job = candidateDAL.GetJobById(jobId);
+            var job = candidateDAL.GetJobById(id);
             if (job == null)
             {
-                TempData["errorMessage"] = "Job not found.";
+                TempData["errorMessage"] = "The job you are trying to apply for does not exist.";
                 return RedirectToAction("Applications");
             }
 
-            return View(job);
+            var application = new ApplicationModel
+            {
+                JobId = id
+            };
+
+            return View(application); 
         }
 
         [HttpPost]
-        public IActionResult ApplyforJob(ApplicationModel application, IFormFile? photo, IFormFile resume)
+        public IActionResult ApplyforJob(ApplicationModel application, IFormFile? ResumeFile, IFormFile? ProfilePhoto,int id)
         {
             try
             {
@@ -151,13 +163,13 @@ namespace RecruitmentManagementSystem.Controllers
                     return View(application);
                 }
 
-                if (resume != null)
+                if (ResumeFile != null)
                 {
-                    if (resume.Length > 0 && resume.ContentType == "application/pdf")
+                    if (ResumeFile.ContentType == "application/pdf") 
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            resume.CopyTo(memoryStream);
+                            ResumeFile.CopyTo(memoryStream);
                             application.Resume = memoryStream.ToArray();
                         }
                     }
@@ -168,13 +180,13 @@ namespace RecruitmentManagementSystem.Controllers
                     }
                 }
 
-                if (photo != null)
+                if (ProfilePhoto != null)
                 {
-                    if (photo.Length > 0 && (photo.ContentType == "image/jpeg" || photo.ContentType == "image/png"))
+                    if (ProfilePhoto.ContentType == "image/jpeg" || ProfilePhoto.ContentType == "image/png") 
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            photo.CopyTo(memoryStream);
+                            ProfilePhoto.CopyTo(memoryStream);
                             application.Photo = memoryStream.ToArray();
                         }
                     }
@@ -185,29 +197,30 @@ namespace RecruitmentManagementSystem.Controllers
                     }
                 }
 
-                application.AppliedDate = DateTime.UtcNow;
-
                 var userId = HttpContext.Session.GetInt32("UserId");
                 if (userId == null)
                 {
-                    TempData["errorMessage"] = "User not logged in.";
+                    TempData["errorMessage"] = "Your session has expired. Please log in again.";
                     return RedirectToAction("Login", "Account");
                 }
 
-                application.CandidateId = (int)userId; 
+                application.CandidateId = (int)userId;
+                application.JobId = id;
+                application.AppliedDate = DateTime.UtcNow;
 
                 candidateDAL.ApplyApplication(application);
-               
 
-                TempData["successMessage"] = "Your application was submitted successfully!";
-                return RedirectToAction("ApplicationSuccess");
+                TempData["successMessage"] = "Your application has been submitted successfully!";
+                return RedirectToAction("Applications");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"An error occurred: {ex.Message}";
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View(application);
             }
         }
+
         /// <summary>
         /// Settings page view
         /// </summary>
@@ -220,8 +233,70 @@ namespace RecruitmentManagementSystem.Controllers
         /// Change Candidate Password
         /// </summary>
         /// <returns></returns>
+        //public IActionResult ChangePassword()
+        //{
+        //    var username = HttpContext.Session.GetString("Username");
+        //    ViewBag.Username = username;
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public IActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        //{
+        //    var userId = HttpContext.Session.GetInt32("UserId");
+
+        //    if (userId == null)
+        //    {
+        //        TempData["errorMessage"] = "Session expired. Please log in again.";
+        //        return RedirectToAction("Login", "Account");
+        //    }
+
+        //    if ( string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+        //    {
+        //        TempData["errorMessage"] = "All fields are required.";
+        //        return View();
+        //    }
+
+        //    if (newPassword != confirmPassword)
+        //    {
+        //        TempData["errorMessage"] = "New password and confirmation password do not match.";
+        //        return View();
+        //    }
+
+        //    try
+        //    {
+        //        var user = candidateDAL.GetUserById((int)userId);
+
+        //        if (user == null)
+        //        {
+        //            TempData["errorMessage"] = "User not found.";
+        //            return RedirectToAction("SignIn", "Home");
+        //        }
+        //        string decodeOldPassword = user.Decode(oldPassword);
+        //        if (user.Password != decodeOldPassword)
+        //        {
+        //            TempData["errorMessage"] = "Old password is incorrect.";
+        //            return View();
+        //        }
+
+        //        string encodedNewPassword = user.Encode(newPassword);
+        //        user.Password = encodedNewPassword;
+        //        candidateDAL.ChangePassword(user);
+
+        //        TempData["successMessage"] = "Password changed successfully!";
+        //        return RedirectToAction("Settings");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ExceptionLogging.SendErrorToText(ex, HttpContext);
+        //        TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+        //        return View();
+        //    }
+        //}
         public IActionResult ChangePassword()
         {
+            var username = HttpContext.Session.GetString("Username");
+            ViewBag.Username = username;
             return View();
         }
 
@@ -233,10 +308,10 @@ namespace RecruitmentManagementSystem.Controllers
             if (userId == null)
             {
                 TempData["errorMessage"] = "Session expired. Please log in again.";
-                return RedirectToAction("SignUp","Home");
+                return RedirectToAction("Login", "Home");
             }
 
-            if (string.IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            if (string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
             {
                 TempData["errorMessage"] = "All fields are required.";
                 return View();
@@ -258,13 +333,14 @@ namespace RecruitmentManagementSystem.Controllers
                     return RedirectToAction("SignIn", "Home");
                 }
 
-                if (user.Password != oldPassword)
-                {
-                    TempData["errorMessage"] = "Old password is incorrect.";
-                    return View();
-                }
+                //if (user.Password != oldPassword) 
+                //{
+                //    TempData["errorMessage"] = "Old password is incorrect.";
+                //    return View();
+                //}
 
-                user.Password = newPassword;
+                string encodedNewPassword = user.Encode(newPassword);
+                user.Password = encodedNewPassword;
                 candidateDAL.ChangePassword(user);
 
                 TempData["successMessage"] = "Password changed successfully!";
@@ -272,9 +348,65 @@ namespace RecruitmentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = $"An error occurred: {ex.Message}";
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
                 return View();
             }
         }
+
+        private bool VerifyPassword(string storedHash, string inputPassword)
+        {
+            // This method will compare the stored hash with the hashed input password
+            // Assuming you're using a hashing library like SHA-256 or bcrypt
+            return storedHash == HashPassword(inputPassword);
+        }
+
+        private string HashPassword(string password)
+        {
+            // This method hashes the password (you can use a hashing algorithm like SHA-256, bcrypt, etc.)
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString(); // This returns the hashed password
+            }
+        }
+
+        /// <summary>
+        /// CAndidate Applications Submitted
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult MyApplications()
+        {
+            try
+            {
+                var candidateId = HttpContext.Session.GetInt32("UserId");
+                if (candidateId == null)
+                {
+                    TempData["errorMessage"] = "Session expired. Please log in again.";
+                    return RedirectToAction("Index");
+                }
+
+                var applications = candidateDAL.GetApplicationsByCandidateId((int)candidateId);
+
+                if (applications.Count == 0)
+                {
+                    TempData["infoMessage"] = "You have not submitted any applications yet.";
+                }
+
+                return View(applications);
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendErrorToText(ex, HttpContext);
+                TempData["errorMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("CandidateIndex");
+            }
+        }
+
     }
 }

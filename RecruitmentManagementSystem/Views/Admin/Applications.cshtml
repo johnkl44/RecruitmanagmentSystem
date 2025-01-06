@@ -1,4 +1,4 @@
-﻿@model List<RecruitmentManagementSystem.Models.JobCreationsModel>
+﻿@model List<RecruitmentManagementSystem.Models.ApplicationViewModel>
 @{
     Layout = "AdminLayout";
 }
@@ -6,35 +6,47 @@
 {
     <div class="alert alert-danger">@TempData["errorMessage"]</div>
 }
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["successMessage"]</div>
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Job title</th>
-            <th>Description</th>
-            <th>Skill set</th>
-            <th>Experiance</th>
-            <th>Slary Range</th>
-            <th>Deadline</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var jobs in Model)
-        {
-            <tr>
-                <td>@jobs.</td>
-                <td>@jobs.</td>
-                <td>@jobs.</td>
-                <td>@jobs.</td>
-                <td>@jobs.</td>
-                <td>@jobs.</td>
-                <td>
-                    @Html.ActionLink("Edit", "#", new { @class = "btn btn-success" }) |
-                    @Html.ActionLink("Details", "#", new { @class = "btn btn-success" }) |
-                    @Html.ActionLink("Deactivate", "#", new { @class = "btn btn-danger" })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<h2>All Submitted Applications</h2>
+
+<div class="card-container">
+    @foreach (var app in Model)
+    {
+        <div class="job-card">
+            <div class="card-header">
+                <div class="job-poster">
+                    <img src="data:image/jpeg;base64,@app.PosterPhoto" alt="Job Poster" width="100" height="100" />
+                </div>
+                <h4>@app.JobTitle</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Applied for:</strong> @app.JobTitle</p>
+                <p><strong>Candidate Name:</strong> @app.CandidateFirstName</p>
+                <p><strong>Candidate Email:</strong> @app.CandidateEmail</p>
+                <p><strong>Application Status:</strong> @app.ApplicationStatus</p>
+                <p><strong>Applied Date:</strong> @app.AppliedDate.ToString("yyyy-MM-dd")</p>
+                <a href="@Url.Action("ApplicationDetails", new { id = app.ApplicationID })">View</a>
+
+            </div>
+            <div class="card-footer">
+
+                <form asp-action="UpdateApplicationStatus" method="post">
+                    <input type="hidden" name="id" value="@app.ApplicationID" />
+                    <button type="submit" name="status" value="Shortlisted" class="btn btn-success">Shortlist</button>
+                </form>
+                <form asp-action="UpdateApplicationStatus" method="post">
+                    <input type="hidden" name="id" value="@app.ApplicationID" />
+                    <button type="submit" name="status" value="Rejected" class="btn btn-danger">Reject</button>
+                </form>
+            </div>
+        </div>
+    }
+    
+</div>
+
+
+

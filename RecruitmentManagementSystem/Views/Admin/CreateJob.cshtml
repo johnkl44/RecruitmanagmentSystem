@@ -2,10 +2,7 @@
 @{
     Layout = "AdminLayout";
 }
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["errorMessage"]</div>
-}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,37 +17,37 @@
 
             <div>
                 <label asp-for="JobTitle"></label>
-                <input asp-for="JobTitle" required />
+                <input asp-for="JobTitle" required onfocusout="checkJobTitle()" />
                 <span asp-validation-for="JobTitle"></span>
             </div>
             <div>
                 <label asp-for="JobDescription"></label>
-                <textarea asp-for="JobDescription" required></textarea>
+                <textarea asp-for="JobDescription" required onfocusout="checkJobDescription()"></textarea>
                 <span asp-validation-for="JobDescription"></span>
             </div>
             <div>
                 <label asp-for="RequiredSkills"></label>
-                <textarea asp-for="RequiredSkills" required></textarea>
+                <textarea asp-for="RequiredSkills" required onfocusout="checkRequiredSkills()"></textarea>
                 <span asp-validation-for="RequiredSkills"></span>
             </div>
             <div>
                 <label asp-for="Experience"></label>
-                <input asp-for="Experience" required  />
+                <input asp-for="Experience" required onfocusout="checkExperience()" />
                 <span asp-validation-for="Experience"></span>
             </div>
             <div>
                 <label asp-for="SalaryRange"></label>
-                <input asp-for="SalaryRange" required />
+                <input asp-for="SalaryRange" required onfocusout="checkSalaryRange()" />
                 <span asp-validation-for="SalaryRange"></span>
             </div>
             <div>
                 <label asp-for="Deadline"></label>
-                <input asp-for="Deadline" required  type="date"/>
+                <input asp-for="Deadline" required type="date" onfocusout=" checkDeadline()" />
                 <span asp-validation-for="Deadline"></span>
             </div>
             <div>
                 <label asp-for="PosterPhoto"></label>
-                <input asp-for="PosterPhoto" type="file" />
+                <input asp-for="PosterPhoto" type="file" onfocusout="checkPosterPhoto()"  />
             </div>
             <div>
                 <button type="submit">Create</button>
@@ -59,4 +56,7 @@
     </div>
 </body>
 </html>
+
+
+
 

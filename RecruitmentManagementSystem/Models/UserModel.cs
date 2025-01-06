@@ -14,19 +14,19 @@ namespace RecruitmentManagementSystem.Models
     {
         [Key]
         public int UserId { get; set; }
-        [DisplayName("First name")]
+        [DisplayName("First Name")]
         [Required(ErrorMessage = "First name is required.")]
         public string? FirstName { get; set; }
-        [DisplayName("Last name")]
+        [DisplayName("Last Name")]
         [Required(ErrorMessage = "Last name is required.")]
         public string? LastName { get; set; }
-        [DisplayName("Date of birth")]
+        [DisplayName("Date of Birth")]
         [Required(ErrorMessage = "Date of birth is required.")]
         public DateTime DateOfBirth { get; set; }
         [DisplayName("Gender")]
         [Required(ErrorMessage = "Gender is required.")]
         public string? Gender { get; set; }
-        [DisplayName("Phone number")]
+        [DisplayName("Phone Number")]
         [Required(ErrorMessage = "Phone number is required.")]
         public string? PhoneNumber { get; set; }
         [DisplayName("Email address")]
@@ -49,14 +49,45 @@ namespace RecruitmentManagementSystem.Models
         public string? Password { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
+        [DisplayName("Confirm Password")]
+
         public string? ConfirmPassword { get; set; }
         [DisplayName("Role")]
         public string? Role { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public List<SelectListItem>? States { get; set; } 
-        public List<SelectListItem>? Cities { get; set; } 
+        public List<SelectListItem>? Cities { get; set; }
+
+        public string Encode(string password)
+        {
+            try
+            {
+                byte[] EncodeDataByte = new byte[password.Length];
+                EncodeDataByte = System.Text.Encoding.UTF8.GetBytes(password);
+                string EncryptPassword = Convert.ToBase64String(EncodeDataByte);
+                return EncryptPassword;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Encoding Password", ex);
+            }
+        }
+
+        public string Decode(string encodedPassword)
+        {
+            try
+            {
+                byte[] decodedBytes = Convert.FromBase64String(encodedPassword);
+                string decodedPassword = System.Text.Encoding.UTF8.GetString(decodedBytes);
+                return decodedPassword;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Decoding Password", ex);
+            }
+        }
+
     }
-   
+
 }

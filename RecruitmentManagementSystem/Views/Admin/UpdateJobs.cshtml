@@ -9,67 +9,69 @@
 <hr />
 <div class="form-container">
     <div class="col-md-4">
-        <form asp-action="UpdateJobs" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="form-group">
-                <label asp-for="JobTitle" class="control-label"></label>
-                <input asp-for="JobTitle" class="form-control" />
-                <span asp-validation-for="JobTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="JobDescription" class="control-label"></label>
-                <input asp-for="JobDescription" class="form-control" />
-                <span asp-validation-for="JobDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RequiredSkills" class="control-label"></label>
-                <input asp-for="RequiredSkills" class="form-control" />
-                <span asp-validation-for="RequiredSkills" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Experience" class="control-label"></label>
-                <input asp-for="Experience" class="form-control" />
-                <span asp-validation-for="Experience" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SalaryRange" class="control-label"></label>
-                <input asp-for="SalaryRange" class="form-control" />
-                <span asp-validation-for="SalaryRange" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Deadline" class="control-label"></label>
-                <input asp-for="Deadline" class="form-control" />
-                <span asp-validation-for="Deadline" class="text-danger"></span>
-            </div>
+        <form asp-action="UpdateJobs" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly"></div>
+            <input type="hidden" asp-for="JobId" />
 
-            <div class="form-group">
+            <div >
+                <label asp-for="JobTitle"></label>
+                <input asp-for="JobTitle" onfocusout="checkJobTitle()" />
+                <span asp-validation-for="JobTitle" ></span>
+            </div>
+            <div>
+                <label asp-for="JobDescription" ></label>
+                <input asp-for="JobDescription" onfocusout="checkJobDescription()" />
+                <span asp-validation-for="JobDescription" ></span>
+            </div>
+            <div>
+                <label asp-for="RequiredSkills"></label>
+                <input asp-for="RequiredSkills" onfocusout="checkRequiredSkills()" />
+                <span asp-validation-for="RequiredSkills"></span>
+            </div>
+            <div>
+                <label asp-for="Experience"></label>
+                <input asp-for="Experience" onfocusout="checkExperience()" />
+                <span asp-validation-for="Experience"></span>
+            </div>
+            <div>
+                <label asp-for="SalaryRange"></label>
+                <input asp-for="SalaryRange" onfocusout="checkSalaryRange()" />
+                <span asp-validation-for="SalaryRange"></span>
+            </div>
+            <div>
+                <label asp-for="Deadline" ></label>
+                <input asp-for="Deadline" onfocusout=" checkDeadline()" />
+                <span asp-validation-for="Deadline"></span>
+            </div>
+            <div>
+                <label asp-for="PosterPhoto">Poster </label>
+
                 @if (!string.IsNullOrEmpty(Model.PosterPhotoBase64))
                 {
-                    <img src="@Model.PosterPhotoBase64" alt="Current Poster" width="100" height="100" />
+                    <img src="data:image/jpeg;base64,@Model.PosterPhotoBase64" alt="Current Poster" width="100" height="100" />
                 }
                 else
                 {
                     <p>No photo available</p>
                 }
-            </div>
-            <div class="form-group">
-                <label asp-for="PosterPhoto" class="control-label"></label>
-                <input asp-for="PosterPhoto" class="form-control" type="file" />
-                <span asp-validation-for="PosterPhoto" class="text-danger"></span>
+
+                <input asp-for="PosterPhoto" type="file"/>
+                <input type="hidden" name="PosterPhotoBase64" value="@Model.PosterPhotoBase64" />
+
+                <span asp-validation-for="PosterPhoto"></span>
             </div>
 
-           
-           
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div>
+                <button type="submit"class="btn btn-primary" >Save</button>
             </div>
         </form>
+        <div>
+            <a asp-action="ManageJobs">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="ViewJobs">Back to List</a>
-</div>
+
 
 

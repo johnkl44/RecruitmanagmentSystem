@@ -1,0 +1,32 @@
+----------- Exception Details -----------
+Log Written Date: 01-01-2025 22:35:14
+
+Error Line No: s user)
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword)
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user)
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------
+----------- Exception Details -----------
+Log Written Date: 01-01-2025 23:32:17
+
+Error Line No: line 53
+
+Error Message: Error in Decoding Password
+
+Exception Type: System.Exception
+
+Error Location:    at RecruitmentManagementSystem.Models.Users.Decode(String encodedPassword) in E:\Dot Net\.vs\Dot Net\Dot NET Core\RecruitmentManagementSystem\RecruitmentManagementSystem\Models\UserModel.cs:line 87
+   at RecruitmentManagementSystem.Controllers.HomeController.SignIn(Users user) in E:\Dot Net\.vs\Dot Net\Dot NET Core\RecruitmentManagementSystem\RecruitmentManagementSystem\Controllers\HomeController.cs:line 53
+
+Error Page URL: /Home/Signin
+
+
+----------------------------------------

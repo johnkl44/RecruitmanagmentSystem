@@ -1,0 +1,142 @@
+﻿@model RecruitmentManagementSystem.Models.ApplicationViewModel
+@{
+    Layout = "AdminLayout";
+}
+
+<h2 class="text-center mt-4">Application Details</h2>
+
+<div class="application-details container-fluid">
+    @if (TempData["errorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["errorMessage"]</div>
+    }
+    @if (TempData["successMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["successMessage"]</div>
+    }
+
+    <div class="card-application">
+        <div class="card-application-header">
+            <h3 class="job-title mb-0">@Model.JobTitle</h3>
+            <a asp-action="Applications" class="btn btn-secondary btn-sm">Back to Applications</a>
+        </div>
+        <div class="card-body">
+            <div class=" photo-section ">
+                <div class=" text-center">
+                    <h5>Job Poster</h5>
+                    <img src="data:image/jpeg;base64,@Model.PosterPhoto" alt="Job Poster" class="img-fluid poster-photo" />
+                </div>
+                <div class="text-center">
+                    <h5>Candidate Photo</h5>
+                    <img src="data:image/jpeg;base64,@Model.ProfilePhoto" alt="Candidate Photo" class="img-fluid candidate-photo" />
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h5 class="details-header">Candidate Details</h5>
+                <p><strong>Full Name:</strong> @Model.CandidateFirstName @Model.CandidateLastName</p>
+                <p><strong>Email:</strong> <a href="mailto:@Model.CandidateEmail">@Model.CandidateEmail</a></p>
+                <p><strong>Application Status:</strong> <span class="badge bg-info">@Model.ApplicationStatus</span></p>
+                <p><strong>Applied Date:</strong> @Model.AppliedDate.ToString("yyyy-MM-dd")</p>
+            </div>
+
+            <div class="resume-section  text-center">
+                <h5>Resume</h5>
+                @if (!string.IsNullOrEmpty(Model.ResumeFile))
+                {
+                    <object data="data:application/pdf;base64,@Model.ResumeFile" type="application/pdf" class="resume-preview">
+                        <p>
+                            Your browser does not support viewing PDFs.
+                            <a href="data:application/pdf;base64,@Model.ResumeFile" download="Resume.pdf">Download the Resume</a>.
+                        </p>
+                    </object>
+                }
+                else
+                {
+                    <p>No Resume uploaded.</p>
+                }
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="UpdateApplicationStatus" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.ApplicationID" />
+                <button type="submit" name="status" value="Shortlisted" class="btn btn-success">Shortlist</button>
+            </form>
+            <form asp-action="UpdateApplicationStatus" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.ApplicationID" />
+                <button type="submit" name="status" value="Rejected" class="btn btn-danger">Reject</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .application-details {
+        padding: 20px;
+    }
+
+    .card-application {
+        width: 90%;
+        max-width: 1200px;
+        border: 1px solid #ddd;
+        margin: auto;
+    }
+
+    .card-application-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+    }
+
+    .job-title {
+        font-size: 2rem;
+    }
+
+    .photo-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .poster-photo,
+    .candidate-photo {
+        max-width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .details-section {
+        padding: 15px 0;
+    }
+
+    .details-header {
+        text-align: left;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .details-section p {
+        text-align: left;
+        margin: 5px 0;
+    }
+
+    .resume-preview {
+        width: 70%;
+        height: auto;
+        max-height: 600px;
+        border: 1px solid #ddd;
+    }
+
+    .card-footer {
+        background-color: #f8f9fa;
+        padding: 15px;
+    }
+
+    .btn {
+        margin: 5px;
+    }
+</style>

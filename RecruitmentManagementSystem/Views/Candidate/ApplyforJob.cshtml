@@ -1,49 +1,37 @@
 ﻿@model RecruitmentManagementSystem.Models.ApplicationModel
-
 @{
     Layout = "CandidateLayout";
 }
 
 <h1>Apply for Job</h1>
 
-<div class="row">
-    <div class="col-md-8">
+<div class="form-container">
+    <div>
         <form asp-action="ApplyforJob" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- Job Information (read-only) -->
-            <div class="form-group">
-                <label asp-for="JobId" class="control-label">Job ID</label>
-                <input asp-for="JobId" class="form-control" readonly />
-            </div>
-
-            <!-- Resume Upload -->
-            <div class="form-group">
-                <label for="ResumeFile" class="control-label">Upload Resume (PDF)</label>
-                <input type="file" id="ResumeFile" name="ResumeFile" class="form-control" accept="application/pdf" required />
+            <div>
+                <label asp-for="ResumeFile" class="control-label">Upload Resume (PDF)</label>
+                <input asp-for="ResumeFile" type="file" id="resume" name="ResumeFile" class="form-control" required />
                 <span asp-validation-for="Resume" class="text-danger"></span>
             </div>
 
-            <!-- Profile Photo Upload -->
-            <div class="form-group">
-                <label for="ProfilePhoto" class="control-label">Upload Profile Photo (JPEG/PNG)</label>
-                <input type="file" id="ProfilePhoto" name="ProfilePhoto" class="form-control" accept="image/jpeg,image/png" required />
+            <div>
+                <label asp-for="ProfilePhoto" class="control-label">Upload Profile Photo (JPEG/PNG)</label>
+                <input asp-for="ProfilePhoto" type="file" id="photo" name="ProfilePhoto" class="form-control" required />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div>
                 <input type="submit" value="Submit Application" class="btn btn-primary" />
             </div>
         </form>
+        <div>
+            <a asp-action="Applications">Back to Job List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to Job List</a>
-</div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+
+
